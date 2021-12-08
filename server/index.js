@@ -1,4 +1,4 @@
-const { time } = require('console');
+// const { time } = require('console');
 const express = require('express');
 const app = express();
 const http = require('http');
@@ -6,22 +6,21 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const SocketServer = new Server(server);
 
-// app.get('/', (req, res) => {  
-//     res.send('<h1>Hello world</h1>');
-// });
-
+//endpoint
 app.get('/*', (req, res) => {
       res.sendFile(__dirname + '/index.html');
 });
 
+//port
 server.listen(3000, () => {  
     console.log('listening on *:3000');
 });
 
+//variables
 serverUsers = []
 
 //create namespaces
-const adminNamespace = SocketServer.of("/admin");
+// const adminNamespace = SocketServer.of("/admin");
 
 //all namespaces
 let nsps = SocketServer._nsps
@@ -29,84 +28,82 @@ let all_namespaces = Array.from(nsps, ([namespace]) => ({ type: 'namespace', nam
 // console.log(SocketServer._nsps)
 // console.log(all_namespaces)
 
-SocketServer.of("/admin").on("connection", (socket) => {
+// SocketServer.of("/admin").on("connection", (socket) => {
     // console.log(socket.nsp.name)
 
     // const newNamespace = socket.nsp; // newNamespace.name === "/dynamic-101"
     // broadcast to all clients in the given sub-namespace  
     // newNamespace.emit("hello");
-});
+// });
 
 SocketServer.of("/").on('connection', (client) => {
+    //variables
     var socketId = client.id
     var clientIp = client.client.conn.remoteAddress
     var clientNsp = client.nsp.name
     // var totalClients = client.server.httpServer._connections
     
+    //used to refresh info on screen
     function updateInfo(client)
     {
-        console.log("update info")
-
+        // console.log("update info")
+        
+        //variables
         let rooms = client.adapter.rooms
         let clients = client.adapter.sids
         let allClients = Array.from(clients, ([client]) => ({ type: 'client', client }));
-        // let allRooms = Array.from(rooms, ([room, clients]) => ({ type: 'room', room, clients: Array.from(clients)})); // array = Array.from(map, ([name, value]) => ({ name, value }));
         let allRooms = Array.from(rooms, ([room, clients]) => ({type: 'room', room, clients: Array.from(clients) }))
         let allRoomsFormatted = []
         let yourRooms = Array.from(client.rooms)
         let clientNames = serverUsers
-        // console.log("your rooms")
-        // console.log(yourRooms)
-        // console.log(clients)
-        // console.log(allRooms)
         let clientsAllJSON = []
         let clientsAll = (Array.from(clients))
 
-        console.log("all clients " + "(" + allClients.length.toString() + ")")
-        console.log(allClients)
+        //debugging
+        // console.log("all clients " + "(" + allClients.length.toString() + ")")
+        // console.log(allClients)
 
+        //sort client names
         for(c in clientsAll)
         {
-            count = (parseInt(c) + 1).toString()
-            type = "type=client"
-            // console.log(count)
+            let count = (parseInt(c) + 1).toString()
+            let type = "type=client"
             let clientFormatted = Array.from(clientsAll[c][1])
             let clientStringified = clientFormatted.toString()
             let clientStringifiedSplit = clientStringified.split(",")
             let clientId = clientStringifiedSplit[0]
             let clientName = ""
 
+            //handle client username
             for(u in serverUsers)
             {
-                if(serverUsers[u].socketId == clientId)
+                let user = serverUsers[u]
+                // console.log(JSON.parse("{" + serverUsers[u] + "}"))
+                // console.log(JSON.parse(serverUsers[u]))
+                // console.log(JSON.parse(serverUsers[u]).username)
+                if(user.socketId == clientId)
                 {
-                    // console.log(clientId)
-                    // console.log(serverUsers[u].socketId)
-                    clientName = serverUsers[u].username
-                    // console.log("clientName: " + c   lientName)
+                    clientName = user.username
+                    console.log("clientName: " + clientName)
+
+                    //debugging
+                    // console.log("clientName: " + clientName)
                     // console.log("new username: " + clientName)
+
+                    break
                 }
             }
-            // clientRooms = clientStringifiedSplit.slice(1, 2)
-            // clientRoomsCount = clientRooms.length
+
+            //update client list
             clientRoom = clientStringifiedSplit[1]
-            if(clientRoom == null){clientRoom = ""}
-            // clientJSON = "{" + "\"type\"" + ":" + "\"client\"" + "," + "\"namespace\"" + ":" + "\"" + clientNsp + "\"" + "," + "\"id\"" + ":" + "\"" + clientId + "\"" + "," + "\"roomsCount\""  + ":" + "\"" + clientRoomsCount + "\"" + "," + "\"rooms\"" + ":" + "\"" + clientRooms + "\"" + "}"
+            if(clientRoom == null)
+            {
+                clientRoom = ""
+            }
             clientJSON = "{" + "\"type\"" + ":" + "\"client\"" + "," + "\"namespace\"" + ":" + "\"" + clientNsp + "\"" + "," + "\"id\"" + ":" + "\"" + clientId + "\"" + "," + "\"room\"" + ":" + "\"" + clientRoom + "\"" + "," + "\"name\""+ ":" + "\"" + clientName + "\"" + "}"
             clientJSON = JSON.parse(clientJSON)
-            // clientFormatted.unshift(type)
-            // clientFormatted.unshift(count)
-            // console.log(clientFormatted)
-            // console.log("client namespace: " + clientNsp)
-            // console.log("client id: " + clientId)
-            // console.log("client rooms: " + clientRooms)
-            // console.log(clientJSON)
             clientsAllJSON.push(clientJSON)
-            // console.log(clientsAllJSON)
         }
-        // console.log(Array.from(clients))
-        // console.log(Array.from(clients)[0][1])
-        // console.log(Array.from(Array.from(clients)[0][1]))
 
         //remove client rooms from rooms list
         for(r in allRooms)
@@ -119,19 +116,22 @@ SocketServer.of("/").on('connection', (client) => {
             }
         }
 
+        //send socket info message
         SocketServer.emit('info', allRoomsFormatted, allClients, all_namespaces, clientsAllJSON);
     }
 
+    //set default client name
     let clientName = "anon" + client.id.substring(0, 4).toUpperCase()
     let clientId = client.id
     
+    //set default client channel
     client.join("general")
-    SocketServer.sockets.in("general").emit('join room', clientName + " joined the room")
-    // console.log(client.rooms)
-    // client.join("gaming")
-    // console.log(client.rooms)
 
-    console.log('user connected' + " / " + socketId + " / " + clientIp + " / " + clientNsp);
+    //send socket join room message
+    SocketServer.sockets.in("general").emit('join room', clientName + " joined the room")
+
+    //debugging
+    // console.log('user connected' + " / " + socketId + " / " + clientIp + " / " + clientNsp);
     // console.log('total clients: ' + totalClients)
     // console.log("rooms")
     // console.log(client.adapter.rooms)
@@ -140,178 +140,232 @@ SocketServer.of("/").on('connection', (client) => {
     // console.log("nsp")
     // console.log(client.adapter.nsp.name)
 
+    //handle socket chat message
     client.on('chat message', (msgObj) => {
-        console.log("\nchat message")
-    //   console.log(msgObj);
+        // console.log("\nchat message")
 
-        for (user in serverUsers)
+        //handle client username
+        for (u in serverUsers)
         {
-        //   console.log(serverUsers[user])
+            let user = serverUsers[u]
 
-            if(serverUsers[user].socketId == msgObj.userId)
+            if(user.socketId == msgObj.userId)
             {
-                msgObj.userName = serverUsers[user].username
+                msgObj.userName = user.username
+                
+                //debugging
+                // console.log("clientName: " + clientName)
+                // console.log("new username: " + clientName)
+
                 break
             }
         }
 
-        console.log("message content: " +  msgObj.content);
-        console.log("message room: " + msgObj.room);
-        console.log("message userId: " + msgObj.userId);
-        console.log("message userName: " + msgObj.userName);
-        console.log("total saved users (serverUsers) "  + serverUsers.length)
-        console.log(serverUsers)
-        
-    //   console.log(client.id)
-    //   console.log(client.adapter.rooms)
-    //   console.log(client.adapter.sids)
-        // SocketServer.emit('some event', { someProperty: 'some value', otherProperty: 'other value' }); // This will emit the event to all connected sockets
-        // client.broadcast.emit('hi'); //to all except self
-    //   SocketServer.emit('chat message', msgObj.msg);
+        //debugging
+        // console.log("message content: " +  msgObj.content);
+        // console.log("message room: " + msgObj.room);
+        // console.log("message userId: " + msgObj.userId);
+        // console.log("message userName: " + msgObj.userName);
+        // console.log("total saved users (serverUsers) "  + serverUsers.length)
+        // console.log(serverUsers)
+
+        //send socket chat message to specific room        
         SocketServer.sockets.in(msgObj.room).emit('chat message', msgObj)
     });
         
+    //handle socket leave room message
     client.on('leave room', (msg) => {
-        console.log("\nleave room")
+        // console.log("\nleave room")
 
-        // let clientId = client.id
-        // let clientName = "anon" + client.id.substring(0, 4).toUpperCase()
-
-        // console.log(client.adapter.rooms)
+        //leave socket room
         client.leave(msg)
+
+        //debugging
+        // console.log(client.adapter.rooms)
         // console.log(client.adapter.rooms)
 
+        //refresh info on
         updateInfo(client)
 
+        //handle client username
         for(u in serverUsers)
         {
-            if(serverUsers[u].socketId == clientId)
+            let user = serverUsers[u]
+
+            if(user.socketId == clientId)
             {
-                // console.log(clientId)
-                // console.log(serverUsers[u].socketId)
-                clientName = serverUsers[u].username
-                // console.log("clientName: " + c   lientName)
+                clientName = user.username
+
+                //debugging
+                // console.log("clientName: " + clientName)
                 // console.log("new username: " + clientName)
+
                 break
             }
         }
 
+        //send socket leave room message
         SocketServer.sockets.in(msg).emit('leave room', clientName + " left the room")
     });
 
+    //handle socket join room message
     client.on('join room', (msg) => {
         // console.log(msg)
+        // console.log("\njoin room")
 
+        //variables
         let newRoom = msg[0]
         let oldRoom = msg[1]
-        // let clientId = client.id
-        // let clientName = "anon" + client.id.substring(0, 4).toUpperCase()
 
-        console.log("\njoin room")
-
-        // console.log(client.adapter.rooms)
+        //leave old socket room and join new socket room
         client.leave(oldRoom)
         client.join(newRoom)
+
+        //debugging
+        // console.log(client.adapter.rooms)
         // console.log(client.adapter.rooms);
 
+        //refresh info on screen
         updateInfo(client)
 
+        //handle client username
         for(u in serverUsers)
         {
-            if(serverUsers[u].socketId == clientId)
+            let user = serverUsers[u]
+
+            if(user.socketId == clientId)
             {
-                // console.log(clientId)
-                // console.log(serverUsers[u].socketId)
-                clientName = serverUsers[u].username
-                // console.log("clientName: " + c   lientName)
+                clientName = user.username
+
+                //debugging
+                // console.log("clientName: " + clientName)
                 // console.log("new username: " + clientName)
+
                 break
             }
         }
 
+        //send socket message leave room and send socket message join room
+        SocketServer.sockets.in(oldRoom).emit('leave room', clientName + " left the room")
         SocketServer.sockets.in(newRoom).emit('join room', clientName + " joined the room")
     });
 
+    //handle socket create room message
     client.on('create room', (msg) => {
         // console.log(msg)
 
+        //variables
         let newRoom = msg[0]
-        newRoom = newRoom.replace(",", "") //forbidden characters = ,
         let oldRoom = msg[1]
-        // let clientId = client.id
-        // let clientName = "anon" + client.id.substring(0, 4).toUpperCase()
         
-        console.log("\ncreate room")
-        console.log("newRoom: " + newRoom)
-        console.log("oldRoom: " + oldRoom)
+        //check for forbidden characters
+        newRoom = newRoom.replace(",", "")
         
-        // console.log(client.adapter.rooms)
+        //leave old socket room and join new socket room
         client.leave(oldRoom)
         client.join(newRoom)
+        
+        //debugging
+        // console.log("\ncreate room")
+        // console.log("newRoom: " + newRoom)
+        // console.log("oldRoom: " + oldRoom)
+        // console.log(client.adapter.rooms)
         // console.log(client.adapter.rooms)
         
-        updateInfo(client)
-
+        //handle client username
         for(u in serverUsers)
         {
-            if(serverUsers[u].socketId == clientId)
+            let user = serverUsers[u]
+
+            if(user.socketId == clientId)
             {
-                // console.log(clientId)
-                // console.log(serverUsers[u].socketId)
-                clientName = serverUsers[u].username
+                clientName = user.username
+
+                //debugging
                 // console.log("clientName: " + c   lientName)
                 // console.log("new username: " + clientName)
+
                 break
             }
         }
         
+        //refresh info on screen
+        updateInfo(client)
+        
+        //send leave room, create room and join room socket message
         SocketServer.sockets.in(oldRoom).emit('leave room', clientName + " left the room")
         SocketServer.sockets.in(newRoom).emit('create room', newRoom + " room created")
         SocketServer.sockets.in(newRoom).emit('join room', clientName + " joined the room")
     });
     
+    //handle socket disconnect message
     client.on('disconnect', () => {
-        console.log('user disconnected');
+        // console.log('user disconnected');
+
+        //refresh info on screen
         updateInfo(client)
     });
 
+    //handle socket add user message
     client.on('add user', (userObj) => {
-        console.log("\nadd username")
+        // console.log("\nadd username")
         // console.log(userObj)
+
+        //variables
         let userId = userObj.socketId
         let userName = userObj.username
         let userIp = client.client.conn.remoteAddress
-        // console.log("user id: " + userId)
-        // console.log("username: " + userName)
-        // console.log("userIp: " + userIp)
 
-        //check if client have saved username
-        for(user in serverUsers)
-        {
-            if(userId == serverUsers[user].socketId)
-            {
-                serverUsers[user].username = userName
-                updateInfo(client)
-                // console.log(serverUsers)
-                return
-            }
-        }
-        
+        //update userObj
         userObj = JSON.stringify(userObj)
         userObj = userObj.replace("}", "")
         userObj = userObj.replace("{", "")
         userObj += "," + "\"ipAddress\"" + ":" + "\"" + userIp + "\""
-        userObj = JSON.parse("{" + userObj + "}")
-        // console.log(userObj)
-        // console.log(serverUsers)
+        userObj = "{" + userObj + "}"
+        userObj = JSON.parse(userObj)
         
-        serverUsers.push(userObj)
-        // console.log(serverUsers)
+        //debugging
+        // console.log("user id: " + userId)
+        // console.log("username: " + userName)
+        // console.log("userIp: " + userIp)
+
+        //handle client username
+        if(serverUsers.length == 0)
+        {
+            serverUsers.push(userObj) //update serverUsers
+        }
+        else if(serverUsers.length > 0)
+        {
+            for(u in serverUsers)
+            {
+                let user = serverUsers[u]
+                
+                //update user name if existing user
+                if(userId == user.socketId)
+                {
+                    user.username = userName                    
+                }
+                //update serverUsers if new user
+                else if(!JSON.stringify(serverUsers).includes(userObj.socketId))
+                {           
+                    serverUsers.push(userObj)
+                }
+
+            }
+        }
+            
+        
+        //debugging
+        console.log(serverUsers)
+        
+        //refresh info on screen
         updateInfo(client)
     })
     
-    // const rooms = SocketServer.of("/").adapter.rooms;
+    //refresh info on screen
     updateInfo(client)
+    
+    //debugging
     // console.log(allClients)
     // console.log(allRooms)
 });

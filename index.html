@@ -10,7 +10,7 @@
       /* ids */
       #chat { height: 94%; width: calc(80% - 3px); right: 0; overflow-y: scroll; border-left: 1px solid black; }
       /* #form { height: 6%; border: 1px solid black; background: lightgray; margin-right: 1px; padding: 10px; padding-bottom: 10px; position: fixed; bottom: 0; right: 0; display: flex; box-sizing: border-box; backdrop-filter: blur(10px); } */
-      #inputChatMessage { display: inline-block; height: 40px; width: 40%; margin: 2px; margin-left: 10%; padding: 0px; padding-left: 10px; padding-right: 10px; font-size: 16px; border: 4px solid black; border-right: 0px; }
+      #inputChatMessage { display: inline-block; height: 40px; width: 40%; margin: 2px; margin-left: 10%; padding: 0px; padding-left: 10px; padding-right: 10px; font-size: 16px; border: 4px solid black; border-right: 0px; border-bottom: 1px solid white; }
       #inputChatMessage:focus { outline: none; }
       /* #form > button { background: #333; border: 1px solid #333; outline: none; color: #fff; } */
       #menu { height: 94%; width: 20%; margin: 0px; overflow-y: scroll; border-right: 1px solid black; }
@@ -32,7 +32,7 @@
       #toggleMenu { margin: 0px; padding: 16px; padding-left: 20px; padding-right: 20px; user-select: none; text-align: left; width: 100%; color: white; background-color: red; }
       #flex { display: flex; height: 94vh; width: 100vw; flex-wrap: wrap; align-content: flex-start; background-color: white; }
       /* #flex > div { display: block; width: 100%; border: 1px solid black } */
-      #buttonSend { display: inline-block; margin: 0px; margin-left: -7px; padding: 10px; height: 40px; border-bottom: 1px solid black; border-color: white;}
+      #buttonSend { display: inline-block; margin: 0px; margin-left: -7px; padding: 10px; height: 41px; }
       #info, #usersList, #createRoom, #addUsername, #allRoomsList { display: none; }
       #infoTitle, #allUsersTitle, #allRoomsTitle, #createRoomTitle, #addUsernameTitle { display: block; margin: 0px; padding: 7px; font-weight: bold; user-select: none; border: 1px solid black; background-color: white; }
       #modal {  
@@ -65,7 +65,7 @@
 
       @media screen and (max-width: 1300px) {
         body {
-            background-color: transparent;
+            background-color: black;
             font-size: 240%;
             overflow: scroll;
         }
@@ -115,6 +115,8 @@
         #allRoomsList { display: none; }
         
         #info { background-color: gray; }
+
+        #infoTitle, #allUsersTitle, #allRoomsTitle, #createRoomTitle, #addUsernameTitle { border: 2px solid black; }
 
       }
     </style>

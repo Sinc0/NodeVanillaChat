@@ -1,240 +1,125 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
-    <style>
-      /* elements */
-      body { margin: 0; padding-bottom: 0; overflow: hidden; font-family: Arial, Helvetica, sans-serif; background-color: black; }
-      button { border-radius: 0%; outline: none; color: black; }
-
-      /* ids */
-      #chat { height: 94%; width: calc(80% - 3px); right: 0; overflow-y: scroll; border-left: 1px solid black; }
-      /* #form { height: 6%; border: 1px solid black; background: lightgray; margin-right: 1px; padding: 10px; padding-bottom: 10px; position: fixed; bottom: 0; right: 0; display: flex; box-sizing: border-box; backdrop-filter: blur(10px); } */
-      #inputChatMessage { display: inline-block; height: 40px; width: 40%; margin: 2px; margin-left: 10%; padding: 0px; padding-left: 10px; padding-right: 10px; font-size: 16px; border: 4px solid black; border-right: 0px; border-bottom: 1px solid white; }
-      #inputChatMessage:focus { outline: none; }
-      /* #form > button { background: #333; border: 1px solid #333; outline: none; color: #fff; } */
-      #menu { height: 94%; width: 20%; margin: 0px; overflow-y: scroll; border-right: 1px solid black; }
-      #menu::-webkit-scrollbar { width: 0px; }
-      /* #menu::-webkit-scrollbar-track { background: #f1f1f1; } */
-      /* #menu::-webkit-scrollbar-thumb { background: #888; } */
-      /* #menu::-webkit-scrollbar-thumb:hover { background: #555 } */
-      /* #menu { scrollbar-width: thin; scrollbar-color: black white; } */
-      /* #chat { scrollbar-width: thin; scrollbar-color: black lightgray; } */
-      #chatBox { width: 100%; margin: 0px; padding: 0px; padding-top: 4px; text-align: center; background-color: black; border: 1px solid black; }
-      #currentRoomInfo, #mobileCurrentRoomInfo { display: block; width: 100%; padding: 16px; text-align: center; user-select: none; color: white; background-color: black; }
-      #mobileCurrentRoomInfo { display: none; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages > li { padding: 20px; }
-      #messages > li:nth-child(even) { background: white; }
-      #messages > li:nth-child(odd) { background: #efefef; }
-      #buttonLeaveRoomTest { margin-left: -4px; }
-      #inputCreateRoom { width: 100% }
-      #toggleMenu { margin: 0px; padding: 16px; padding-left: 20px; padding-right: 20px; user-select: none; text-align: left; width: 100%; color: white; background-color: red; }
-      #flex { display: flex; height: 94vh; width: 100vw; flex-wrap: wrap; align-content: flex-start; background-color: white; }
-      /* #flex > div { display: block; width: 100%; border: 1px solid black } */
-      #buttonSend { display: inline-block; margin: 0px; margin-left: -7px; padding: 10px; height: 42px; }
-      #info, #usersList, #createRoom, #addUsername, #allRoomsList { display: none; }
-      #infoTitle, #allUsersTitle, #allRoomsTitle, #createRoomTitle, #addUsernameTitle { display: block; margin: 0px; padding: 7px; font-weight: bold; user-select: none; border: 1px solid black; background-color: white; }
-      #modal {  
-        margin: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%); background-color: red;
-        border: 1px solid black; 
-       }
-       #mobileMenuCurrentRoom, #mobileMenuAllRooms { display: none; }
-       #mobileMenuHide, #mobileMenuShow { display: none; }
-       #allUsersTitle { display: none; }
-       #inputCreateRoom, #inputAddUser, #buttonCreateRoomTest, #buttonAddUserTest { width: calc(100% - 8px); font-weight: normal; font-size: 17px; }
-       #createRoom, #addUsername, #allRoomsList, #info { padding: 10px; background-color: gray; }
-
-      /* classes */
-      .buttonJoin, .buttonLeave { padding: 3px; overflow-wrap: break-word; font-weight: normal; font-size: 17px; }
-      .buttonClient, .buttonUser, .buttonNamespace { width: 100%; }
-      .buttonCreate, #buttonAddUserTest, #buttonCreateRoomTest { width: calc(100%); border-color: lightgray; }
-      .buttonUser {}
-      .buttonNamespace {}
-      .errorMessage { display: none; padding: 20px; width: auto; background-color: red; border: 7px solid black; }
-
-      /*** mobile ***/
-      /* @media screen and (min-device-width : 176px) and  (max-device-width : 360px) {
-        body {background: green; } 
-      } */
-
-      @media screen and (max-width: 1300px) {
-        body {
-            background-color: transparent;
-            font-size: 240%;
-            overflow: scroll;
-        }
-
-        /* #flex > div { display: block; width: 100%; border: 1px solid black } */
-        #flex > div { width: 100%; border: 1px solid black }
-
-        #menu { height: auto; }
-
-        #menu > div { padding: 20px; }
-
-        #mobileMenuCurrentRoom, #mobileMenuAllRooms { display: block; }
-
-        #inputChatMessage { display: inline-block; height: 71px; width: 83%; margin: 1px; margin-top: 6px; padding: 0px; padding-left: 10px; padding-right: 10px; font-size: 40px; }
-
-        #chat { height: 66%; }
-        
-        #currentRoomInfo, #allRoomsTitle { display: none; }
-
-        #mobileCurrentRoomInfo { padding: 30px; display: block; }
-
-        #buttonSend { height: 72px; margin-left: -14px; padding: 10px; font-size: 40px; }
-
-        .buttonLeave, .buttonJoin { min-height: 100px; min-width: 400px; padding: 10px; font-size: 40px; overflow-wrap: break-word; }
-
-        #mobileMenuAllRooms { display: flex; margin: 0px; padding: 0px; padding-left: 20px; padding-right: 20px; overflow-x: scroll; background-color: gray; }
-
-        #mobileMenuAllRooms > div { position: relative; display: inline-flex; margin: 30px 20px 30px 20px }
-
-        #createRoom, #addUsername { display: block; }
-        #createRoom, #addUsername > button, input { display: block; margin: 0px; padding: 0px; font-size: 40px; }
-
-        #buttonCreateRoomTest { display: inline-block; font-size: 40px; }
-
-        #createRoom, #addUsername { display: none; background-color: gray; }
-
-        #inputCreateRoom, #buttonCreateRoomTest, #inputAddUser, #buttonAddUserTest { height: 60px; }
-
-        #inputCreateRoom, #inputAddUser { padding-left: 20px; padding-right: 20px; width: calc(96% - 6px); font-size: 40px; }
-        
-        #buttonCreateRoomTest, #buttonAddUserTest { width: calc(100% + 2px); }
-
-        .errorMessage { display: none; padding: 20px; width: calc(94% + 4px); background-color: red; border: 7px solid black; }
-
-        #chatBox { position: fixed; bottom: 0px; height: 90px; padding-top: 10px; padding-bottom: 10px; }
-
-        #allRoomsList { display: none; }
-        
-        #info { background-color: gray; }
-
-        #infoTitle, #allUsersTitle, #allRoomsTitle, #createRoomTitle, #addUsernameTitle { border: 2px solid black; }
-
-        #messages > li { padding: 40px; }
-
-      }
-    </style>
+    <title>Chat</title>
+    <script src="/socket.io/socket.io.js"></script>
   </head>
-
-  <script src="/socket.io/socket.io.js"></script>
   
   <body>
+      <!-- modal test -->
       <!-- <div id="modal">
           <p>test</p>
           <input id="modalInputAddUser" />
           <button id="modalButtonAddUserTest" class="modalButtonCreate">Add</button>
       </div> -->
       
-      <div id="flex">
+    <div id="flex">
+        <!-- toggle menu -->
         <!-- <div id="toggleMenu" onclick="toggleMenu()">
             <b id="toggleMenuText">❮</b> 
         </div> -->
 
+        <!-- current room -->
         <div id="currentRoomInfo" onclick="toggleMenu()">
             <b id="inputCurrentRoom"></b>
         </div>
 
-        <div id="mobileMenuAllRooms">
-            mobileMenuAllRooms
-        </div>
-        
-        <div id="menu" style="display: block;">
-            <!-- <div id="mobileMenuCurrentRoom">
-                mobileMenuCurrentRoom
-            </div> -->
-
-            <div id="infoTitle" onclick="toggleMenuInfo()"><b>Info</b></div>
-            <div id="info">
-            </div>
-    
-            <!-- <b>All Namespaces</b>
-            <div id="namespacesList">
-            </div>
-    
-            <br /> -->
-        
-            <!-- <b id="allClientsTitle">All Clients</b>
-            <div id="clientsList">
-            </div>
-        
-            <br /> -->
-        
-            <div id="allUsersTitle" onclick="toggleMenuUsers()">All Users</div>
-            <div id="usersList">
-            </div>
-        
-            <div id="allRoomsTitle"  onclick="toggleMenuRooms()">All Rooms</div>
-            <div id="allRoomsList">
-            </div>
+        <!-- mobile all rooms -->
+        <div id="mobileMenuAllRooms"></div>
             
-            <div id="createRoomTitle" onclick="toggleMenuCreateRoom()">Create Room</div>
-            <div id="createRoom">
-                <div id="errorMessageCreateRoom" class="errorMessage"></div>
-                <input id="inputCreateRoom" maxlength="40" />
-                <button id="buttonCreateRoomTest" class="buttonCreate">Create</button>
-            </div>
-                    
-            <div id="addUsernameTitle" onclick="toggleMenuAddUsername()">Add Username</div>
-            <div id="addUsername">
-                <div id="errorMessageAddUsername" class="errorMessage"></div>
-                <input id="inputAddUser"  maxlength="40"/>
-                <button id="buttonAddUserTest" class="buttonCreate">Add</button>
-            </div>
-
-    
-            <!-- <b>Leave Room</b>
-            <br />
-            <input id="inputLeaveRoom"/>
-            <button id="buttonLeaveRoomTest">Leave</button> -->
-            
-            <!-- <b>Your Rooms</b>
-            <div id="yourRoomsList">
-            </div> -->
-        
-            <!-- <b>Join Test Room</b>
-            <br />
-            <button id="buttonJoinRoomTest">Join</button> -->
-        </div>
-        
+        <!-- mobile current room -->
         <div id="mobileCurrentRoomInfo" onclick="toggleMobileMenu()">
             <span id="mobileMenuHide">▲</span>
             <span id="mobileMenuShow" >▼</span>
             <b id="mobileInputCurrentRoom"></b>
         </div>
 
-        <div id="chat" style="border: 0;">
-            <!-- <b>Current Room</b> -->
+        <!-- chat -->
+        <div id="chat">
             <ul id="messages"></ul>
-
         </div>
 
+        <!-- side menu -->
+        <div id="menu">
+            <!-- mobile current room -->
+            <!-- <div id="mobileMenuCurrentRoom">
+                mobileMenuCurrentRoom
+            </div> -->
+
+            <!-- info -->
+            <p id="infoTitle" onclick="toggleMenuInfo()"><b>Info</b></p>
+            <div id="info"></div>
+
+            <!-- all namespaces -->
+            <!-- <b>All Namespaces</b>
+            <div id="namespacesList">
+            </div> -->
+
+            <!-- all clients -->
+            <!-- <b id="allClientsTitle">All Clients</b>
+            <div id="clientsList">
+            </div> -->
+                    
+            <!-- users -->
+            <p id="allUsersTitle" onclick="toggleMenuUsers()">All Users</p>
+            <div id="usersList"></div>
+        
+            <!-- rooms -->
+            <p id="allRoomsTitle" onclick="toggleMenuRooms()">All Rooms</p>
+            <div id="allRoomsList"></div>
+
+            <!-- create room -->
+            <p id="createRoomTitle" onclick="toggleMenuCreateRoom()">Create Room</p>
+            <div id="createRoom">
+                <div id="errorMessageCreateRoom" class="errorMessage"></div>
+                <input id="inputCreateRoom" maxlength="40" />
+                <button id="buttonCreateRoomTest" class="buttonCreate">Create</button>
+            </div>
+                    
+            <!-- add username -->
+            <p id="addUsernameTitle" onclick="toggleMenuAddUsername()">Add Username</p>
+            <div id="addUsername">
+                <div id="errorMessageAddUsername" class="errorMessage"></div>
+                <input id="inputAddUser"  maxlength="40"/>
+                <button id="buttonAddUserTest" class="buttonCreate">Add</button>
+            </div>
+
+            <!-- leave room -->
+            <!-- <b>Leave Room</b>
+            <input id="inputLeaveRoom"/>
+            <button id="buttonLeaveRoomTest">Leave</button> -->
+        
+            <!-- your rooms -->
+            <!-- <b>Your Rooms</b>
+            <div id="yourRoomsList">
+            </div> -->
+        
+            <!-- join test room -->
+            <!-- <b>Join Test Room</b>
+            <button id="buttonJoinRoomTest">Join</button> -->
+        </div>
+
+        <!-- chat box -->
         <div id="chatBox">
             <form id="form" action="">
-              <input id="inputChatMessage" autocomplete="off" maxlength="1000" />
-              <button id="buttonSend">Send</button>
+                <input id="inputChatMessage" autocomplete="off" maxlength="1000" />
+                <button id="buttonSend">Send</button>
             </form>
         </div>
     </div>
-    
-
   </body>
+</html>
 
-  <script>
+<script>
+    //variables
     var socket = io(); //var socket = io('/admin');
     var form = document.getElementById('form');  
     var input = document.getElementById('input');
     var buttonTest = document.getElementById('buttonTest');
     var url = document.location.pathname //window.location.href
 
-    //listeners
+
+    //event listeners
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -245,9 +130,6 @@
         }
     });
 
-    // buttonJoinRoomTest.addEventListener('click', function(e) {
-    //     socket.emit('join room', 'shopping');
-    // });
 
     buttonCreateRoomTest.addEventListener('click', function(e) {
         //variables
@@ -300,6 +182,7 @@
         errorMessageCreateRoom.style.display = "none"
     });
 
+
     // buttonLeaveRoomTest.addEventListener('click', function(e) {
     //     //clear messages
     //     messages.innerHTML = ""
@@ -308,6 +191,12 @@
 
     //     inputLeaveRoom.value = ""
     // });
+
+
+    // buttonJoinRoomTest.addEventListener('click', function(e) {
+    //     socket.emit('join room', 'shopping');
+    // });
+
 
     //functions
     function joinRoom(roomName)
@@ -340,6 +229,7 @@
         socket.emit('join room', createRoomInfo);
     }
 
+
     function addUser(socketId)
     {
         characterCheck = forbiddenCharacterCheck(inputAddUser.value)
@@ -367,6 +257,7 @@
         errorMessageAddUsername.style.display = "none"
     }
 
+    
     function leaveRoom(roomName)
     {
         //clear messages
@@ -375,6 +266,7 @@
         socket.emit('leave room', roomName);
     }
 
+    
     function forbiddenCharacterCheck(string)
     {
         if(string == "") return true
@@ -388,6 +280,7 @@
         if(string.includes("%")) return true
     }
 
+    
     function currentTimeStamp()
     {
         let currentDate = new Date();
@@ -406,6 +299,7 @@
         return time
     }
 
+    
     function toggleMenu()
     {
         console.log("toggleMenu")
@@ -425,6 +319,7 @@
         }
     }
 
+    
     function toggleMobileMenu()
     {
         console.log("toggleMobileMenu")
@@ -457,6 +352,7 @@
         }
     }
 
+    
     function toggleMenuInfo()
     {
         let menuInfo = document.getElementById("info")
@@ -471,6 +367,7 @@
         }
     }
 
+    
     function toggleMenuUsers()
     {
         let menuUsers = document.getElementById("usersList")
@@ -485,6 +382,7 @@
         }
     }
 
+    
     function toggleMenuRooms()
     {
         let menuRooms = document.getElementById("allRoomsList")
@@ -499,6 +397,7 @@
         }
     }
 
+    
     function toggleMenuCreateRoom()
     {
         let createRoom = document.getElementById("createRoom")
@@ -513,6 +412,7 @@
         }
     }
 
+    
     function toggleMenuAddUsername()
     {
         let addUsername = document.getElementById("addUsername")
@@ -527,7 +427,8 @@
         }
     }
 
-    //socket stream
+
+    //handle socket stream
     socket.on('chat message', function(msg) {
         console.log(msg)
 
@@ -545,6 +446,7 @@
         // console.log(chat.scrollHeight)
         chat.scrollTo(0, chat.scrollHeight);
     });
+
 
     socket.on('info', function(allRooms, allClients, all_namespaces, clientInfo) {
         // console.log(socket)
@@ -922,6 +824,7 @@
         }
     });
 
+
     socket.on('leave room', function(msg) {
         console.log("msg")
         
@@ -936,6 +839,7 @@
 
         chat.scrollTo(0, chat.scrollHeight);
     });
+
 
     socket.on('join room', function(msg) {
         console.log(msg)
@@ -952,6 +856,7 @@
         chat.scrollTo(0, chat.scrollHeight);
     });
 
+
     socket.on('create room', function(msg) {
         console.log(msg)
 
@@ -966,5 +871,202 @@
 
         chat.scrollTo(0, chat.scrollHeight);
     });
-  </script>
-</html>
+</script>
+
+<style>
+    /*** elements ***/
+    body { margin: 0; padding-bottom: 0; overflow: hidden; font-family: Arial, Helvetica, sans-serif; }
+    button { border-radius: 0%; outline: none; color: black; }
+
+
+    /*** ids ***/
+    #chat { height: 94vh; width: calc(80% - 3px); right: 0; overflow-y: scroll; border-left: 1px solid black; }
+    /* #form { height: 6%; border: 1px solid black; background: lightgray; margin-right: 1px; padding: 10px; padding-bottom: 10px; position: fixed; bottom: 0; right: 0; display: flex; box-sizing: border-box; backdrop-filter: blur(10px); } */
+    /* #form > button { background: #333; border: 1px solid #333; outline: none; color: #fff; } */
+    #inputChatMessage 
+    { 
+        display: inline-block; 
+        height: 40px; 
+        width: 40%; 
+        margin: 2px; 
+        margin-left: 10%; 
+        padding: 0px; 
+        padding-left: 10px; 
+        padding-right: 10px; 
+        font-size: 16px; 
+        border: 4px solid black; 
+        border-right: 0px; 
+        border-bottom: 1px solid white; 
+    }
+    #inputChatMessage:focus { outline: none; }
+    #menu 
+    { 
+        position: fixed;
+        display: block;
+        top: 0px;
+        right: 0px; 
+        height: 94%; 
+        width: 20%; 
+        margin: 0px; 
+        overflow-y: scroll; 
+        border-right: 1px solid black; 
+        background-color: black; 
+    }
+    #menu::-webkit-scrollbar { width: 0px; }
+    /* #menu::-webkit-scrollbar-track { background: #f1f1f1; } */
+    /* #menu::-webkit-scrollbar-thumb { background: #888; } */
+    /* #menu::-webkit-scrollbar-thumb:hover { background: #555 } */
+    /* #menu { scrollbar-width: thin; scrollbar-color: black white; } */
+    /* #chat { scrollbar-width: thin; scrollbar-color: black lightgray; } */
+    #chatBox 
+    { 
+        position: fixed;
+        width: 20%; 
+        bottom: 0px;
+        right: 0px;
+        margin: 0px; 
+        padding: 0px; 
+        padding-top: 4px; 
+        text-align: center; 
+    }
+    #currentRoomInfo 
+    { 
+        display: block; 
+        width: 100%; 
+        padding: 16px; 
+        text-align: center; 
+        user-select: none; 
+        color: white; 
+        background-color: black; 
+    } 
+    #mobileCurrentRoomInfo 
+    { 
+        display: block; 
+        width: 100%; 
+        padding: 16px; 
+        text-align: center;
+        user-select: none; 
+        color: white; 
+        background-color: black; 
+    }
+    #mobileCurrentRoomInfo { display: none; }
+    #messages { list-style-type: none; margin: 0; padding: 0; }
+    #messages > li { padding: 20px; }
+    #messages > li:nth-child(even) { background: white; }
+    #messages > li:nth-child(odd) { background: #efefef; }
+    #buttonLeaveRoomTest { margin-left: -4px; }
+    #inputCreateRoom { width: 100% }
+    #toggleMenu 
+    { 
+        width: 100%;
+        margin: 0px; 
+        padding: 16px; 
+        padding-left: 20px; 
+        padding-right: 20px; 
+        user-select: none; 
+        text-align: left; 
+        color: white; 
+        background-color: red; 
+    }
+    #flex { display: flex; height: 94vh; width: 100vw; flex-wrap: wrap; align-content: flex-start; background-color: white; }
+    /* #flex > div { display: block; width: 100%; border: 1px solid black } */
+    #buttonSend { display: inline-block; margin: 0px; margin-left: -7px; padding: 10px; height: 42px; }
+    #info { display: none; } 
+    #usersList { display: none; } 
+    #createRoom { display: none; } 
+    #addUsername { display: none; } 
+    #allRoomsList { display: none; }
+    #infoTitle { display: block; margin: 0px; padding: 7px; font-weight: bold; user-select: none; border: 1px solid black; background-color: white; } 
+    #allUsersTitle { display: block; margin: 0px; padding: 7px; font-weight: bold; user-select: none; border: 1px solid black; background-color: white; } 
+    #allRoomsTitle { display: block; margin: 0px; padding: 7px; font-weight: bold; user-select: none; border: 1px solid black; background-color: white; } 
+    #createRoomTitle { display: block; margin: 0px; padding: 7px; font-weight: bold; user-select: none; border: 1px solid black; background-color: white; } 
+    #addUsernameTitle { display: block; margin: 0px; padding: 7px; font-weight: bold; user-select: none; border: 1px solid black; background-color: white; }
+    #modal 
+    {  
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%); background-color: red;
+        border: 1px solid black; 
+     }
+     #mobileMenuCurrentRoom, #mobileMenuAllRooms { display: none; }
+     #mobileMenuHide, #mobileMenuShow { display: none; }
+     #allUsersTitle { display: none; }
+     #inputCreateRoom { width: calc(100% - 8px); font-weight: normal; font-size: 17px; } 
+     #inputAddUser { width: calc(100% - 8px); font-weight: normal; font-size: 17px; } 
+     #buttonCreateRoomTest { width: calc(100% - 8px); font-weight: normal; font-size: 17px; } 
+     #buttonAddUserTest { width: calc(100% - 8px); font-weight: normal; font-size: 17px; }
+     #createRoom { padding: 10px; background-color: gray; } 
+     #addUsername { padding: 10px; background-color: gray; } 
+     #allRoomsList { padding: 10px; background-color: gray; } 
+     #info { padding: 10px; background-color: gray; }
+
+
+    /*** classes ***/
+    .buttonJoin, .buttonLeave { padding: 3px; overflow-wrap: break-word; font-weight: normal; font-size: 17px; }
+    .buttonClient, .buttonUser, .buttonNamespace { width: 100%; }
+    .buttonCreate, #buttonAddUserTest, #buttonCreateRoomTest { width: calc(100%); border-color: lightgray; }
+    .buttonUser {}
+    .buttonNamespace {}
+    .errorMessage { display: none; padding: 20px; width: auto; background-color: red; border: 7px solid black; }
+
+    
+    /*** mobile ***/
+    @media screen and (max-width: 1300px) {
+      body { background-color: transparent; font-size: 240%; overflow: scroll; }
+
+      #flex > div { width: 100%; border: 1px solid black }
+      /* #flex > div { display: block; width: 100%; border: 1px solid black } */
+      #menu { height: auto; }
+      #menu > div { padding: 20px; }
+      #mobileMenuCurrentRoom, #mobileMenuAllRooms { display: block; }
+      #inputChatMessage 
+      { 
+        display: inline-block; 
+        height: 71px; 
+        width: 83%; 
+        margin: 1px; 
+        margin-top: 6px; 
+        padding: 0px; 
+        padding-left: 10px; 
+        padding-right: 10px; 
+        font-size: 40px; 
+      }
+      #chat { height: 66%; }
+      #currentRoomInfo, #allRoomsTitle { display: none; }
+      #mobileCurrentRoomInfo { padding: 30px; display: block; }
+      #buttonSend { height: 72px; margin-left: -14px; padding: 10px; font-size: 40px; }
+      #mobileMenuAllRooms 
+      { 
+        display: flex; 
+        margin: 0px; 
+        padding: 0px; 
+        padding-left: 20px; 
+        padding-right: 20px; 
+        overflow-x: scroll; 
+        background-color: gray; 
+      }
+      #mobileMenuAllRooms > div { position: relative; display: inline-flex; margin: 30px 20px 30px 20px }
+      #createRoom, #addUsername { display: block; }
+      #createRoom, #addUsername > button, input { display: block; margin: 0px; padding: 0px; font-size: 40px; }
+      #buttonCreateRoomTest { display: inline-block; font-size: 40px; }
+      #createRoom, #addUsername { display: none; background-color: gray; }
+      #inputCreateRoom, #buttonCreateRoomTest, #inputAddUser, #buttonAddUserTest { height: 60px; }
+      #inputCreateRoom, #inputAddUser { padding-left: 20px; padding-right: 20px; width: calc(96% - 6px); font-size: 40px; }
+      #buttonCreateRoomTest, #buttonAddUserTest { width: calc(100% + 2px); }
+      #chatBox { position: fixed; bottom: 0px; height: 90px; padding-top: 10px; padding-bottom: 10px; }
+      #allRoomsList { display: none; }
+      #info { background-color: gray; }
+      #infoTitle { border: 2px solid black; } 
+      #allUsersTitle { border: 2px solid black; } 
+      #allRoomsTitle { border: 2px solid black; } 
+      #createRoomTitle { border: 2px solid black; } 
+      #addUsernameTitle { border: 2px solid black; }
+      #messages > li { padding: 40px; }
+
+      .buttonLeave, .buttonJoin { min-height: 100px; min-width: 400px; padding: 10px; font-size: 40px; overflow-wrap: break-word; }
+      .errorMessage { display: none; padding: 20px; width: calc(94% + 4px); background-color: red; border: 7px solid black; }
+    }
+  </style>

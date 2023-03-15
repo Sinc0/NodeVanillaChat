@@ -1,45 +1,43 @@
-// const { time } = require('console');
-const express = require('express');
-const app = express();
-const http = require('http');
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const SocketServer = new Server(server);
-
-//endpoint
-app.get('/*', (req, res) => {
-      res.sendFile(__dirname + '/index.html');
-});
-
-//port
-let port = process.env.PORT;
-if (port == null || port == "") {
-  port = 3000;
-}
-server.listen(port, () => {  
-    console.log('listening on *:' + port);
-});
+//imports
+const express = require('express')
+const http = require('http')
+const { Server } = require("socket.io")
+const path = require('path')
+// const { time } = require('console')
 
 //variables
-serverUsers = []
+const app = express()
+const server = http.createServer(app)
+const SocketServer = new Server(server)
+const port = process.env.PORT || 3000
+var serverUsers = []
 
-//create namespaces
+//settings
+app.use(express.static(path.join(__dirname, 'public'))) //set public folder
+
+//routes
+app.get('/*', (req, res) => { res.sendFile(__dirname + '/index.html'); })
+
+//start server
+server.listen(port, () => { console.log('listening on *:' + port); })
+
+//namespaces
 // const adminNamespace = SocketServer.of("/admin");
-
-//all namespaces
 let nsps = SocketServer._nsps
-let all_namespaces = Array.from(nsps, ([namespace]) => ({ type: 'namespace', namespace}));
+let all_namespaces = Array.from(nsps, ([namespace]) => ({ type: 'namespace', namespace}))
+
+//debugging
 // console.log(SocketServer._nsps)
 // console.log(all_namespaces)
-
 // SocketServer.of("/admin").on("connection", (socket) => {
     // console.log(socket.nsp.name)
 
     // const newNamespace = socket.nsp; // newNamespace.name === "/dynamic-101"
     // broadcast to all clients in the given sub-namespace  
-    // newNamespace.emit("hello");
-// });
+    // newNamespace.emit("hello")
+// })
 
+//handle clients
 SocketServer.of("/").on('connection', (client) => {
     //variables
     var socketId = client.id
@@ -55,7 +53,7 @@ SocketServer.of("/").on('connection', (client) => {
         //variables
         let rooms = client.adapter.rooms
         let clients = client.adapter.sids
-        let allClients = Array.from(clients, ([client]) => ({ type: 'client', client }));
+        let allClients = Array.from(clients, ([client]) => ({ type: 'client', client }))
         let allRooms = Array.from(rooms, ([room, clients]) => ({type: 'room', room, clients: Array.from(clients) }))
         let allRoomsFormatted = []
         let yourRooms = Array.from(client.rooms)
@@ -121,7 +119,7 @@ SocketServer.of("/").on('connection', (client) => {
         }
 
         //send socket info message
-        SocketServer.emit('info', allRoomsFormatted, allClients, all_namespaces, clientsAllJSON);
+        SocketServer.emit('info', allRoomsFormatted, allClients, all_namespaces, clientsAllJSON)
     }
 
     //set default client name
@@ -135,7 +133,7 @@ SocketServer.of("/").on('connection', (client) => {
     SocketServer.sockets.in("general").emit('join room', clientName + " joined the room")
 
     //debugging
-    // console.log('user connected' + " / " + socketId + " / " + clientIp + " / " + clientNsp);
+    // console.log('user connected' + " / " + socketId + " / " + clientIp + " / " + clientNsp)
     // console.log('total clients: ' + totalClients)
     // console.log("rooms")
     // console.log(client.adapter.rooms)
@@ -166,16 +164,16 @@ SocketServer.of("/").on('connection', (client) => {
         }
 
         //debugging
-        // console.log("message content: " +  msgObj.content);
-        // console.log("message room: " + msgObj.room);
-        // console.log("message userId: " + msgObj.userId);
-        // console.log("message userName: " + msgObj.userName);
+        // console.log("message content: " +  msgObj.content)
+        // console.log("message room: " + msgObj.room)
+        // console.log("message userId: " + msgObj.userId)
+        // console.log("message userName: " + msgObj.userName)
         // console.log("total saved users (serverUsers) "  + serverUsers.length)
         // console.log(serverUsers)
 
         //send socket chat message to specific room        
         SocketServer.sockets.in(msgObj.room).emit('chat message', msgObj)
-    });
+    })
         
     //handle socket leave room message
     client.on('leave room', (msg) => {
@@ -210,7 +208,7 @@ SocketServer.of("/").on('connection', (client) => {
 
         //send socket leave room message
         SocketServer.sockets.in(msg).emit('leave room', clientName + " left the room")
-    });
+    })
 
     //handle socket join room message
     client.on('join room', (msg) => {
@@ -227,7 +225,7 @@ SocketServer.of("/").on('connection', (client) => {
 
         //debugging
         // console.log(client.adapter.rooms)
-        // console.log(client.adapter.rooms);
+        // console.log(client.adapter.rooms)
 
         //refresh info on screen
         updateInfo(client)
@@ -252,7 +250,7 @@ SocketServer.of("/").on('connection', (client) => {
         //send socket message leave room and send socket message join room
         SocketServer.sockets.in(oldRoom).emit('leave room', clientName + " left the room")
         SocketServer.sockets.in(newRoom).emit('join room', clientName + " joined the room")
-    });
+    })
 
     //handle socket create room message
     client.on('create room', (msg) => {
@@ -300,7 +298,7 @@ SocketServer.of("/").on('connection', (client) => {
         SocketServer.sockets.in(oldRoom).emit('leave room', clientName + " left the room")
         SocketServer.sockets.in(newRoom).emit('create room', newRoom + " room created")
         SocketServer.sockets.in(newRoom).emit('join room', clientName + " joined the room")
-    });
+    })
     
     //handle socket disconnect message
     client.on('disconnect', () => {
@@ -308,7 +306,7 @@ SocketServer.of("/").on('connection', (client) => {
 
         //refresh info on screen
         updateInfo(client)
-    });
+    })
 
     //handle socket add user message
     client.on('add user', (userObj) => {
@@ -372,4 +370,4 @@ SocketServer.of("/").on('connection', (client) => {
     //debugging
     // console.log(allClients)
     // console.log(allRooms)
-});
+})

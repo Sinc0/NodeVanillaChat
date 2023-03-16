@@ -22,9 +22,9 @@ app.get('/*', (req, res) => { res.sendFile(__dirname + '/index.html'); })
 server.listen(port, () => { console.log('listening on *:' + port); })
 
 //namespaces
-// const adminNamespace = SocketServer.of("/admin");
 let nsps = SocketServer._nsps
 let all_namespaces = Array.from(nsps, ([namespace]) => ({ type: 'namespace', namespace}))
+// const adminNamespace = SocketServer.of("/admin");
 
 //debugging
 // console.log(SocketServer._nsps)
@@ -37,100 +37,98 @@ let all_namespaces = Array.from(nsps, ([namespace]) => ({ type: 'namespace', nam
     // newNamespace.emit("hello")
 // })
 
-//handle clients
+//functions
+function updateInfo(client, socketId, clientIp, clientNsp, clientName)
+{
+    //variables
+    let rooms = client.adapter.rooms
+    let clients = client.adapter.sids
+    let allClients = Array.from(clients, ([client]) => ({ type: 'client', client }))
+    let allRooms = Array.from(rooms, ([room, clients]) => ({type: 'room', room, clients: Array.from(clients) }))
+    let allRoomsFormatted = []
+    let yourRooms = Array.from(client.rooms)
+    let clientNames = serverUsers
+    let clientsAllJSON = []
+    let clientsAll = (Array.from(clients))
+
+    //debugging
+    // console.log("all clients " + "(" + allClients.length.toString() + ")")
+    // console.log(allClients)
+
+    //sort client names
+    for(c in clientsAll)
+    {
+        let count = (parseInt(c) + 1).toString()
+        let type = "type=client"
+        let clientFormatted = Array.from(clientsAll[c][1])
+        let clientStringified = clientFormatted.toString()
+        let clientStringifiedSplit = clientStringified.split(",")
+        let clientId = clientStringifiedSplit[0]
+        let clientName = ""
+
+        //handle client username
+        for(u in serverUsers)
+        {
+            let user = serverUsers[u]
+            // console.log(JSON.parse("{" + serverUsers[u] + "}"))
+            // console.log(JSON.parse(serverUsers[u]))
+            // console.log(JSON.parse(serverUsers[u]).username)
+            if(user.socketId == clientId)
+            {
+                clientName = user.username
+                console.log("clientName: " + clientName)
+
+                //debugging
+                // console.log("clientName: " + clientName)
+                // console.log("new username: " + clientName)
+
+                break
+            }
+        }
+
+        //update client list
+        clientRoom = clientStringifiedSplit[1]
+
+        //null check
+        if(clientRoom == null)
+        {
+            clientRoom = ""
+        }
+
+        //create client json obj
+        clientJSON = "{" + "\"type\"" + ":" + "\"client\"" + "," + "\"namespace\"" + ":" + "\"" + clientNsp + "\"" + "," + "\"id\"" + ":" + "\"" + clientId + "\"" + "," + "\"room\"" + ":" + "\"" + clientRoom + "\"" + "," + "\"name\""+ ":" + "\"" + clientName + "\"" + "}"
+        clientJSON = JSON.parse(clientJSON)
+
+        //add client json obj to array
+        clientsAllJSON.push(clientJSON)
+    }
+
+    //remove clients from rooms list
+    for(r in allRooms)
+    {
+        if(allRooms[r].room != allRooms[r].clients) { allRoomsFormatted.push(allRooms[r]) }
+    }
+
+    //send socket info message
+    SocketServer.emit('info', allRoomsFormatted, allClients, all_namespaces, clientsAllJSON)
+}
+
+//handle socket stream
 SocketServer.of("/").on('connection', (client) => {
     //variables
     var socketId = client.id
     var clientIp = client.client.conn.remoteAddress
     var clientNsp = client.nsp.name
-    // var totalClients = client.server.httpServer._connections
-    
-    //used to refresh info on screen
-    function updateInfo(client)
-    {
-        // console.log("update info")
-        
-        //variables
-        let rooms = client.adapter.rooms
-        let clients = client.adapter.sids
-        let allClients = Array.from(clients, ([client]) => ({ type: 'client', client }))
-        let allRooms = Array.from(rooms, ([room, clients]) => ({type: 'room', room, clients: Array.from(clients) }))
-        let allRoomsFormatted = []
-        let yourRooms = Array.from(client.rooms)
-        let clientNames = serverUsers
-        let clientsAllJSON = []
-        let clientsAll = (Array.from(clients))
-
-        //debugging
-        // console.log("all clients " + "(" + allClients.length.toString() + ")")
-        // console.log(allClients)
-
-        //sort client names
-        for(c in clientsAll)
-        {
-            let count = (parseInt(c) + 1).toString()
-            let type = "type=client"
-            let clientFormatted = Array.from(clientsAll[c][1])
-            let clientStringified = clientFormatted.toString()
-            let clientStringifiedSplit = clientStringified.split(",")
-            let clientId = clientStringifiedSplit[0]
-            let clientName = ""
-
-            //handle client username
-            for(u in serverUsers)
-            {
-                let user = serverUsers[u]
-                // console.log(JSON.parse("{" + serverUsers[u] + "}"))
-                // console.log(JSON.parse(serverUsers[u]))
-                // console.log(JSON.parse(serverUsers[u]).username)
-                if(user.socketId == clientId)
-                {
-                    clientName = user.username
-                    console.log("clientName: " + clientName)
-
-                    //debugging
-                    // console.log("clientName: " + clientName)
-                    // console.log("new username: " + clientName)
-
-                    break
-                }
-            }
-
-            //update client list
-            clientRoom = clientStringifiedSplit[1]
-            if(clientRoom == null)
-            {
-                clientRoom = ""
-            }
-            clientJSON = "{" + "\"type\"" + ":" + "\"client\"" + "," + "\"namespace\"" + ":" + "\"" + clientNsp + "\"" + "," + "\"id\"" + ":" + "\"" + clientId + "\"" + "," + "\"room\"" + ":" + "\"" + clientRoom + "\"" + "," + "\"name\""+ ":" + "\"" + clientName + "\"" + "}"
-            clientJSON = JSON.parse(clientJSON)
-            clientsAllJSON.push(clientJSON)
-        }
-
-        //remove client rooms from rooms list
-        for(r in allRooms)
-        {
-            if(allRooms[r].room != allRooms[r].clients)
-            {
-                
-                // console.log(allRooms[r])
-                allRoomsFormatted.push(allRooms[r])
-            }
-        }
-
-        //send socket info message
-        SocketServer.emit('info', allRoomsFormatted, allClients, all_namespaces, clientsAllJSON)
-    }
-
-    //set default client name
     let clientName = "anon" + client.id.substring(0, 4).toUpperCase()
     let clientId = client.id
+    // var totalClients = client.server.httpServer._connections
     
-    //set default client channel
+    //join default room
     client.join("general")
-
-    //send socket join room message
     SocketServer.sockets.in("general").emit('join room', clientName + " joined the room")
+
+    //update elements
+    updateInfo(client, socketId, clientIp, clientNsp, clientName)
 
     //debugging
     // console.log('user connected' + " / " + socketId + " / " + clientIp + " / " + clientNsp)
@@ -142,8 +140,9 @@ SocketServer.of("/").on('connection', (client) => {
     // console.log("nsp")
     // console.log(client.adapter.nsp.name)
 
-    //handle socket chat message
+    //handle socket stream
     client.on('chat message', (msgObj) => {
+        //debugging
         // console.log("\nchat message")
 
         //handle client username
@@ -171,12 +170,12 @@ SocketServer.of("/").on('connection', (client) => {
         // console.log("total saved users (serverUsers) "  + serverUsers.length)
         // console.log(serverUsers)
 
-        //send socket chat message to specific room        
+        //send socket message       
         SocketServer.sockets.in(msgObj.room).emit('chat message', msgObj)
     })
         
-    //handle socket leave room message
     client.on('leave room', (msg) => {
+        //debugging
         // console.log("\nleave room")
 
         //leave socket room
@@ -206,12 +205,12 @@ SocketServer.of("/").on('connection', (client) => {
             }
         }
 
-        //send socket leave room message
+        //send socket message
         SocketServer.sockets.in(msg).emit('leave room', clientName + " left the room")
     })
 
-    //handle socket join room message
     client.on('join room', (msg) => {
+        //debugging
         // console.log(msg)
         // console.log("\njoin room")
 
@@ -247,13 +246,13 @@ SocketServer.of("/").on('connection', (client) => {
             }
         }
 
-        //send socket message leave room and send socket message join room
+        //send socket messages
         SocketServer.sockets.in(oldRoom).emit('leave room', clientName + " left the room")
         SocketServer.sockets.in(newRoom).emit('join room', clientName + " joined the room")
     })
 
-    //handle socket create room message
     client.on('create room', (msg) => {
+        //debugging
         // console.log(msg)
 
         //variables
@@ -291,25 +290,25 @@ SocketServer.of("/").on('connection', (client) => {
             }
         }
         
-        //refresh info on screen
+        //update elements
         updateInfo(client)
         
-        //send leave room, create room and join room socket message
+        //send socket messages
         SocketServer.sockets.in(oldRoom).emit('leave room', clientName + " left the room")
         SocketServer.sockets.in(newRoom).emit('create room', newRoom + " room created")
         SocketServer.sockets.in(newRoom).emit('join room', clientName + " joined the room")
     })
     
-    //handle socket disconnect message
     client.on('disconnect', () => {
+        //debugging
         // console.log('user disconnected');
 
-        //refresh info on screen
+        //update elements
         updateInfo(client)
     })
 
-    //handle socket add user message
     client.on('add user', (userObj) => {
+        //debugging
         // console.log("\nadd username")
         // console.log(userObj)
 
@@ -318,7 +317,7 @@ SocketServer.of("/").on('connection', (client) => {
         let userName = userObj.username
         let userIp = client.client.conn.remoteAddress
 
-        //update userObj
+        //set userObj
         userObj = JSON.stringify(userObj)
         userObj = userObj.replace("}", "")
         userObj = userObj.replace("{", "")
@@ -356,18 +355,13 @@ SocketServer.of("/").on('connection', (client) => {
             }
         }
             
-        
         //debugging
         console.log(serverUsers)
         
-        //refresh info on screen
+        //update elements
         updateInfo(client)
     })
     
-    //refresh info on screen
+    //update elements
     updateInfo(client)
-    
-    //debugging
-    // console.log(allClients)
-    // console.log(allRooms)
 })

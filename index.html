@@ -6,32 +6,11 @@
   </head>
   
   <body>
-      <!-- modal test -->
-      <!-- <div id="modal">
-          <p>test</p>
-          <input id="modalInputAddUser" />
-          <button id="modalButtonAddUserTest" class="modalButtonCreate">Add</button>
-      </div> -->
-      
-    <div id="flex">
-        <!-- toggle menu -->
-        <!-- <div id="toggleMenu" onclick="toggleMenu()">
-            <b id="toggleMenuText">❮</b> 
-        </div> -->
-
+    <div id="main">        
         <!-- current room -->
-        <div id="currentRoomInfo" onclick="toggleMenu()">
+        <div id="currentRoomInfo">
             <b id="inputCurrentRoom"></b>
-        </div>
-
-        <!-- mobile all rooms -->
-        <div id="mobileMenuAllRooms"></div>
-            
-        <!-- mobile current room -->
-        <div id="mobileCurrentRoomInfo" onclick="toggleMobileMenu()">
-            <span id="mobileMenuHide">▲</span>
-            <span id="mobileMenuShow" >▼</span>
-            <b id="mobileInputCurrentRoom"></b>
+            <img id="menuImg" src="/menu.png" onclick="displayMenu()" />
         </div>
 
         <!-- chat -->
@@ -39,50 +18,61 @@
             <ul id="messages"></ul>
         </div>
 
-        <!-- side menu -->
+        <!-- menu -->
         <div id="menu">
-            <!-- mobile current room -->
-            <!-- <div id="mobileMenuCurrentRoom">
-                mobileMenuCurrentRoom
-            </div> -->
+            <p id="menuOptionsTitle">Options</p>
+            <div id="menuOptions">
+                <!-- chat -->
+                <p id="chatTitle" class="menuCategoryTitle" onclick="undisplayMenu()"><b>Chat</b></p>
+                
+                <!-- info -->
+                <!-- <p id="infoTitle" class="menuCategoryTitle" onclick="displayMenuCategory('info')"><b>Info</b></p> -->
+                <div id="menuInfo" class="menuCategory">
+                    <div id="menuCurrentName" class="menuCategory"></div>
+                    <div id="menuCurrentRoom" class="menuCategory"></div>
+                </div>
+    
+                <!-- users -->
+                <p id="allUsersTitle" class="menuCategoryTitle" onclick="displayMenuCategory('users')">Users</p>
+                <div id="usersList" class="menuCategory"></div>
+            
+                <!-- rooms -->
+                <p id="allRoomsTitle" class="menuCategoryTitle" onclick="displayMenuCategory('rooms')">Rooms</p>
+                <div id="allRoomsList" class="menuCategory"></div>
+    
+                <!-- create room -->
+                <p id="createRoomTitle" class="menuCategoryTitle" onclick="displayMenuCategory('createRoom')">Create Room</p>
+                <div id="createRoom" class="menuCategory">
+                    <div id="errorMessageCreateRoom" class="errorMessage"></div>
+                    <input id="inputCreateRoom" maxlength="40" placeholder="room name..." />
+                    <button id="buttonCreateRoom" class="buttonCreate">Confirm Room Name</button>
+                </div>
+                        
+                <!-- add username -->
+                <p id="addUsernameTitle" class="menuCategoryTitle" onclick="displayMenuCategory('changeUsername')">Username</p>
+                <div id="addUsername" class="menuCategory">
+                    <div id="errorMessageAddUsername" class="errorMessage"></div>
+                    <input id="inputAddUser" maxlength="40" placeholder="username..." />
+                    <button id="buttonAddUsername" class="buttonCreate">Confirm Username</button>
+                </div>
 
-            <!-- info -->
-            <p id="infoTitle" onclick="toggleMenuInfo()"><b>Info</b></p>
-            <div id="info"></div>
+                <!-- about -->
+                <p id="aboutTitle" class="menuCategoryTitle" onclick="displayMenuCategory('about')"><b>About</b></p>
 
-            <!-- all namespaces -->
+                <!-- back to menu button -->
+                <p id="buttonBackToMenu" onclick="displayMenu()">⬅</p>
+            </div>
+            <p id="buttonExitMenu" onclick="undisplayMenu()">⬅</p>
+
+            <!-- namespaces -->
             <!-- <b>All Namespaces</b>
             <div id="namespacesList">
             </div> -->
-
-            <!-- all clients -->
+    
+            <!-- clients -->
             <!-- <b id="allClientsTitle">All Clients</b>
             <div id="clientsList">
             </div> -->
-                    
-            <!-- users -->
-            <p id="allUsersTitle" onclick="toggleMenuUsers()">All Users</p>
-            <div id="usersList"></div>
-        
-            <!-- rooms -->
-            <p id="allRoomsTitle" onclick="toggleMenuRooms()">All Rooms</p>
-            <div id="allRoomsList"></div>
-
-            <!-- create room -->
-            <p id="createRoomTitle" onclick="toggleMenuCreateRoom()">Create Room</p>
-            <div id="createRoom">
-                <div id="errorMessageCreateRoom" class="errorMessage"></div>
-                <input id="inputCreateRoom" maxlength="40" />
-                <button id="buttonCreateRoomTest" class="buttonCreate">Create</button>
-            </div>
-                    
-            <!-- add username -->
-            <p id="addUsernameTitle" onclick="toggleMenuAddUsername()">Add Username</p>
-            <div id="addUsername">
-                <div id="errorMessageAddUsername" class="errorMessage"></div>
-                <input id="inputAddUser"  maxlength="40"/>
-                <button id="buttonAddUserTest" class="buttonCreate">Add</button>
-            </div>
 
             <!-- leave room -->
             <!-- <b>Leave Room</b>
@@ -93,15 +83,11 @@
             <!-- <b>Your Rooms</b>
             <div id="yourRoomsList">
             </div> -->
-        
-            <!-- join test room -->
-            <!-- <b>Join Test Room</b>
-            <button id="buttonJoinRoomTest">Join</button> -->
         </div>
 
-        <!-- chat box -->
+        <!-- chatbox -->
         <div id="chatBox">
-            <form id="form" action="">
+            <form id="formChatbox" action="">
                 <input id="inputChatMessage" autocomplete="off" maxlength="1000" />
                 <button id="buttonSend">Send</button>
             </form>
@@ -112,41 +98,54 @@
 
 <script>
     //variables
-    var socket = io(); //var socket = io('/admin');
-    var form = document.getElementById('form');  
-    var input = document.getElementById('input');
-    var buttonTest = document.getElementById('buttonTest');
+    var socket = io() //var socket = io('/admin')
+    var formChatbox = document.getElementById('formChatbox')
+    var input = document.getElementById('input')
+    var buttonTest = document.getElementById('buttonTest')
     var url = document.location.pathname //window.location.href
 
 
     //event listeners
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+    formChatbox.addEventListener('submit', function(e) {
+        //variables
+        let msgObj = null
+
+        //prevent default form submit
+        e.preventDefault()
         
-        if (inputChatMessage.value) {
-            let msgObj = JSON.parse("{" + "\"content\"" + ":" + "\"" + inputChatMessage.value + "\"" + "," + "\"room\"" + ":" + "\"" + inputCurrentRoom.innerText + "\"" + "," + "\"userId\"" + ":" + "\"" + socket.id + "\"" + "," + "\"userName\"" + ":" + "\"" + "anon" + "\"" + "}")
-            socket.emit('chat message', msgObj);
-            inputChatMessage.value = '';
+        //null check
+        if(inputChatMessage.value) 
+        {
+            //create message json obj
+            msgObj = JSON.parse("{" + "\"content\"" + ":" + "\"" + inputChatMessage.value + "\"" + "," + "\"room\"" + ":" + "\"" + inputCurrentRoom.innerText + "\"" + "," + "\"userId\"" + ":" + "\"" + socket.id + "\"" + "," + "\"userName\"" + ":" + "\"" + "anon" + "\"" + "}")
+            
+            //send socket message
+            socket.emit('chat message', msgObj)
+            
+            //reset chatbox
+            inputChatMessage.value = ''
         }
-    });
+    })
 
 
-    buttonCreateRoomTest.addEventListener('click', function(e) {
+    buttonCreateRoom.addEventListener('click', function(e) {
         //variables
         let createRoomInfo = []
         let newRoom = inputCreateRoom.value
 
+        //debugging
         console.log(newRoom)
 
         //push new room name and old room name to array
         createRoomInfo.push(inputCreateRoom.value)
         createRoomInfo.push(inputCurrentRoom.innerText)
         
-        //check for forbidden characters
+        //forbidden characters check
         characterCheck = forbiddenCharacterCheck(inputCreateRoom.value)
+
         if(characterCheck == true)
         {
-            // alert("room name cann    ot be empty/contain space or following characters !@<<|,%")
+            // alert("room name cannot be empty/contain space or following characters !@<<|,%")
             let errorMessageCreateRoom = document.getElementById("errorMessageCreateRoom")
             errorMessageCreateRoom.style.display = "block"
             errorMessageCreateRoom.innerText = "room name cannot be empty/contain space or following characters !@<<|,%"
@@ -154,12 +153,11 @@
         }
         
         //check if room already exists
-        let d = document.getElementsByClassName("room")
-        console.log(d)
-        for(rm in d)
+        let roomElements = document.getElementsByClassName("room")
+
+        for(rm in roomElements)
         {
-            let roomThatExists = d[rm].innerText
-            // console.log(roomThatExists)
+            let roomThatExists = roomElements[rm].innerText
             
             if(newRoom == roomThatExists)
             {
@@ -173,49 +171,55 @@
         messages.innerHTML = ""
 
         //create room
-        socket.emit('create room', createRoomInfo);
+        socket.emit('create room', createRoomInfo)
         
         //clear create room input box
         inputCreateRoom.value = ""
 
         //clear error message
         errorMessageCreateRoom.style.display = "none"
-    });
+    })
 
 
     // buttonLeaveRoomTest.addEventListener('click', function(e) {
     //     //clear messages
     //     messages.innerHTML = ""
 
-    //     socket.emit('leave room', inputLeaveRoom.value);
+    //     socket.emit('leave room', inputLeaveRoom.value)
 
     //     inputLeaveRoom.value = ""
-    // });
+    // })
 
 
     // buttonJoinRoomTest.addEventListener('click', function(e) {
-    //     socket.emit('join room', 'shopping');
-    // });
+    //     socket.emit('join room', 'shopping')
+    // })
 
 
     //functions
     function joinRoom(roomName)
     {
+        //debugging
         // console.log(roomName)
         // console.log(socket.id)
+
+        //variables
         let newRoom = roomName
         let oldRoom = inputCurrentRoom.innerText
         let createRoomInfo = []
 
+        //add room to array
         createRoomInfo.push(newRoom)
         createRoomInfo.push(oldRoom)
 
+        //check if client room
         // if(newRoom == socket.id)
         // {
         //     console.log("you cannot join your own room")
         //     return
         // }
         
+        //check if already in room
         if(newRoom == oldRoom)
         {
             // console.log("you are already in room " + "'" + newRoom + "'")
@@ -226,13 +230,20 @@
         //clear messages
         messages.innerHTML = ""
         
-        socket.emit('join room', createRoomInfo);
+        //send socket message
+        socket.emit('join room', createRoomInfo)
     }
 
 
     function addUser(socketId)
     {
+        //variables
+        let username = null
+        let user = null
+        
+        //forbidden character check
         characterCheck = forbiddenCharacterCheck(inputAddUser.value)
+
         if(characterCheck == true)
         {
             // alert("username cannot be empty/contain space or following characters !@<<|,%")
@@ -242,15 +253,24 @@
             return
         }
 
+        //null check
         // if(inputAddUser.value == "")
         // {
         //     alert("username cannot be empty or contain !@<<|,%")
         //     return
         // }
+
+        //set username
         username = inputAddUser.value
-        let user = JSON.parse("{" + "\"socketId\"" + ":" + "\"" + socketId + "\"" + "," + "\"username\"" + ":" + "\"" + username + "\"" + "}")
-        console.log(user)
-        socket.emit('add user', user);
+
+        //set user
+        user = JSON.parse("{" + "\"socketId\"" + ":" + "\"" + socketId + "\"" + "," + "\"username\"" + ":" + "\"" + username + "\"" + "}")
+        
+
+        //send socket message
+        socket.emit('add user', user)
+
+        //clear add username input
         inputAddUser.value = ""
         
         //clear error message
@@ -263,219 +283,210 @@
         //clear messages
         messages.innerHTML = ""
 
-        socket.emit('leave room', roomName);
+        //send socket message
+        socket.emit('leave room', roomName)
     }
 
     
     function forbiddenCharacterCheck(string)
     {
-        if(string == "") return true
-        if(string.includes(" ")) return true
-        if(string.includes("!")) return true
-        if(string.includes("@")) return true
-        if(string.includes("<")) return true
-        if(string.includes(">")) return true
-        if(string.includes("|")) return true
-        if(string.includes(",")) return true
-        if(string.includes("%")) return true
+        if(string == "") { return true }
+        else if(string.includes(" ")) { return true }
+        else if(string.includes("!")) { return true }
+        else if(string.includes("@")) { return true }
+        else if(string.includes("<")) { return true }
+        else if(string.includes(">")) { return true }
+        else if(string.includes("|")) { return true }
+        else if(string.includes(",")) { return true }
+        else if(string.includes("%")) { return true }
     }
 
     
     function currentTimeStamp()
     {
-        let currentDate = new Date();
-        currentHours = currentDate.getHours()
-        currentMinutes = currentDate.getMinutes()
-        currentSeconds = currentDate.getSeconds()
+        //variables
+        let currentDate = new Date()
+        let currentHours = currentDate.getHours()
+        let currentMinutes = currentDate.getMinutes()
+        let currentSeconds = currentDate.getSeconds()
+        let time = null
+        
+        //check timestamps
+        if (currentHours < 10) { currentHours = "0" + currentHours.toString() }
+        if (currentMinutes < 10) { currentMinutes = "0" + currentMinutes.toString() }
+        if (currentSeconds < 10) { currentSeconds = "0" + currentSeconds.toString() }
+        
+        //set time
+        time = + currentHours + ":" + currentMinutes + ":" + currentSeconds
 
-        if (currentHours < 10)
-            currentHours + "0" + currentHours.toString()
-        if (currentMinutes < 10)
-            currentMinutes = "0" + currentMinutes.toString()
-        if (currentSeconds < 10)
-            currentSeconds = "0" + currentSeconds.toString()
-
-        let time = + currentHours + ":" + currentMinutes + ":" + currentSeconds;
         return time
     }
 
-    
-    function toggleMenu()
+
+    function displayMenuCategory(category)
     {
-        console.log("toggleMenu")
-
-        let menu = document.getElementById("menu")
-        let chat = document.getElementById("chat")
-
-        if(menu.style.display == "block")
-        {
-            menu.style.display = "none"
-            chat.style.width = "100%"
-        }
-        else if(menu.style.display == "none")
-        {
-            menu.style.display = "block"    
-            chat.style.width = "calc(80% - 3px)"
-        }
-    }
-
-    
-    function toggleMobileMenu()
-    {
-        console.log("toggleMobileMenu")
-
-        let menuInfo = document.getElementById("info")
+        //elements
+        // let menuInfo = document.getElementById("menuInfo")
+        let menuUsers = document.getElementById("usersList")
+        let menuRooms = document.getElementById("allRoomsList")
         let createRoom = document.getElementById("createRoom")
         let addUsername = document.getElementById("addUsername")
-        let errorMessageCreateRoom = document.getElementById("errorMessageCreateRoom")
-        let errorMessageAddUsername = document.getElementById("errorMessageAddUsername")
-        let inputCreateRoom = document.getElementById("inputCreateRoom")
-        let inputAddUser = document.getElementById("inputAddUser") 
-        
-        menuInfo.style.display = "none"
+        // let infoTitle = document.getElementById("infoTitle")
+        let allUsersTitle = document.getElementById("allUsersTitle")
+        let allRoomsTitle = document.getElementById("allRoomsTitle")
+        let createRoomTitle = document.getElementById("createRoomTitle")
+        let addUsernameTitle = document.getElementById("addUsernameTitle")
+        let buttonExitMenu = document.getElementById("buttonExitMenu")
+        let buttonBackToMenu = document.getElementById("buttonBackToMenu")
+
+        //reset elements
+        // menuInfo.style.display = "none"
+        menuUsers.style.display = "none"
+        menuRooms.style.display = "none"
         createRoom.style.display = "none"
         addUsername.style.display = "none"
-        errorMessageCreateRoom.style.display = "none"
-        errorMessageAddUsername.style.display = "none"
-        inputCreateRoom.value = ""
-        inputAddUser.value = ""
+        // infoTitle.style.display = "none"
+        allUsersTitle.style.display = "none"
+        allRoomsTitle.style.display = "none"
+        createRoomTitle.style.display = "none"
+        addUsernameTitle.style.display = "none"
+        buttonExitMenu.style.display = "none"
+        buttonBackToMenu.style.display = "block"
 
-        if(menu.style.display == "block")
+        //update elements
+        if(category == "info")
         {
-            menu.style.display = "none"
-            chat.style.height = "82%"
+            // menuInfo.style.display = "block"
+            // infoTitle.style.display = "block"
         }
-        else if(menu.style.display == "none")
-        {
-            menu.style.display = "block"    
-            chat.style.height = "66%"
-        }
-    }
-
-    
-    function toggleMenuInfo()
-    {
-        let menuInfo = document.getElementById("info")
-
-        if(menuInfo.style.display == "block")
-        {
-            menuInfo.style.display = "none"
-        }
-        else
-        {
-            menuInfo.style.display = "block"
-        }
-    }
-
-    
-    function toggleMenuUsers()
-    {
-        let menuUsers = document.getElementById("usersList")
-
-        if(menuUsers.style.display == "block")
-        {
-            menuUsers.style.display = "none"
-        }
-        else
+        else if(category == "users")
         {
             menuUsers.style.display = "block"
+            allUsersTitle.style.display = "block"
         }
-    }
-
-    
-    function toggleMenuRooms()
-    {
-        let menuRooms = document.getElementById("allRoomsList")
-
-        if(menuRooms.style.display == "block")
-        {
-            menuRooms.style.display = "none"
-        }
-        else
+        else if(category == "rooms")
         {
             menuRooms.style.display = "block"
+            allRoomsTitle.style.display = "block"
         }
-    }
-
-    
-    function toggleMenuCreateRoom()
-    {
-        let createRoom = document.getElementById("createRoom")
-        
-        if(createRoom.style.display == "block")
-        {
-            createRoom.style.display = "none"
-        }
-        else
+        else if(category == "createRoom")
         {
             createRoom.style.display = "block"
+            createRoomTitle.style.display = "block"
         }
-    }
-
-    
-    function toggleMenuAddUsername()
-    {
-        let addUsername = document.getElementById("addUsername")
-        
-        if(addUsername.style.display == "block")
-        {
-            addUsername.style.display = "none"
-        }
-        else
+        else if(category == "changeUsername")
         {
             addUsername.style.display = "block"
+            addUsernameTitle.style.display = "block"
         }
     }
 
+
+    function displayMenu()
+    {
+        //elements
+        let menu = document.getElementById("menu")
+        // let menuInfo = document.getElementById("menuInfo")
+        let menuUsers = document.getElementById("usersList")
+        let menuRooms = document.getElementById("allRoomsList")
+        let createRoom = document.getElementById("createRoom")
+        let addUsername = document.getElementById("addUsername")
+        // let infoTitle = document.getElementById("infoTitle")
+        let allUsersTitle = document.getElementById("allUsersTitle")
+        let allRoomsTitle = document.getElementById("allRoomsTitle")
+        let createRoomTitle = document.getElementById("createRoomTitle")
+        let addUsernameTitle = document.getElementById("addUsernameTitle")
+        let buttonExitMenu = document.getElementById("buttonExitMenu")
+        let buttonBackToMenu = document.getElementById("buttonBackToMenu")
+
+        //reset elements
+        // menuInfo.style.display = "none"
+        menuUsers.style.display = "none"
+        menuRooms.style.display = "none"
+        createRoom.style.display = "none"
+        addUsername.style.display = "none"
+
+        // infoTitle.style.display = "block"
+        allUsersTitle.style.display = "block"
+        allRoomsTitle.style.display = "block"
+        createRoomTitle.style.display = "block"
+        addUsernameTitle.style.display = "block"
+        buttonExitMenu.style.display = "block"
+        buttonBackToMenu.style.display = "none"
+
+        menu.style.display = "block"
+    }
+
+
+    function undisplayMenu()
+    {
+        let menu = document.getElementById("menu")
+
+        menu.style.display = "none"
+    }
 
     //handle socket stream
     socket.on('chat message', function(msg) {
+        //debugging
         console.log(msg)
 
-        let item = document.createElement('li');
+        //variables
+        let item = document.createElement('li')
         let time = currentTimeStamp()
 
-        if(msg.userName == "anon")
-        {
-            msg.userName = "anon" + msg.userId.substring(0, 4).toUpperCase()
-        }
+        //set anon username
+        if(msg.userName == "anon") { msg.userName = "anon" + msg.userId.substring(0, 4).toUpperCase() }
 
-        item.textContent = time + " " + msg.userName + ": " + msg.content;
-        messages.appendChild(item);
-        // console.log(chat)
-        // console.log(chat.scrollHeight)
-        chat.scrollTo(0, chat.scrollHeight);
-    });
+        //set chat message text
+        item.textContent = time + " " + msg.userName + ": " + msg.content
+
+        //add message to array
+        messages.appendChild(item)
+
+        //update scrollbar
+        chat.scrollTo(0, chat.scrollHeight)
+    })
 
 
     socket.on('info', function(allRooms, allClients, all_namespaces, clientInfo) {
-        // console.log(socket)
+        //debugging
         console.log("socket id: " + socket.id)
         console.log("socket nsp: " + socket.nsp)
+        console.log(clientInfo)
+        // console.log(socket)
         // console.log(allRooms)
         // console.log(allClients)
         // console.log(all_namespaces)
-        console.log(clientInfo)
-        
-        //add functions
-        buttonAddUserTest.onclick = function(){addUser(socket.id)}
 
-        //clear lists
+        //variables
+        defaultRooms = ['general', 'gaming', 'food']
+        
+        //elements
+        let buttonAddUsername = document.getElementById("buttonAddUsername")
+        let allRoomsList = document.getElementById("allRoomsList")
+        let menuCurrentName = document.getElementById("menuCurrentName")
+        let menuCurrentRoom = document.getElementById("menuCurrentRoom")
+        let usersList = document.getElementById("usersList")
+        let allUsersTitle = document.getElementById("allUsersTitle")
+        let allRoomsTitle = document.getElementById("allRoomsTitle")
+        
+        //update elements
+        buttonAddUsername.onclick = function(){addUser(socket.id)}
         allRoomsList.innerHTML = ""
-        info.innerHTML = ""
+        menuCurrentName.innerHTML = ""
+        menuCurrentRoom.innerHTML = ""
+        usersList.innerHTML = ""
+        allUsersTitle.innerText = "Users " + "(" + clientInfo.length + ")"
+        allRoomsTitle.innerText = "Rooms " + "(" + (allRooms.length + 2) + ")"
         // clientsList.innerHTML = ""
         // namespacesList.innerHTML = ""
         // yourRoomsList.innerHTML = ""
-        usersList.innerHTML = ""
-        mobileMenuAllRooms.innerHTML = ""
-
-        //set titles
         // allClientsTitle.innerText = "All Clients " + "(" + clientInfo.length + ")"
-        allUsersTitle.innerText = "All Users " + "(" + clientInfo.length + ")"
         
         //sort client info
         for(c in clientInfo)
         {
+            //variables
             let clientId = clientInfo[c].id
             let clientNamespace = clientInfo[c].namespace
             let clientRoom = clientInfo[c].room
@@ -483,48 +494,79 @@
             let button = document.createElement('button')
             let br = document.createElement('br')
             
+            //update elements
+            menuCurrentName.style.padding = "10px"
+            menuCurrentName.style.userSelect = "none"
+            menuCurrentName.style.color = "black"
+            menuCurrentName.style.borderTop = "1px solid black"
+            menuCurrentName.style.backgroundColor = "white"
+            menuCurrentRoom.style.padding = "10px"
+            menuCurrentRoom.style.userSelect = "none"
+            menuCurrentRoom.style.color = "black"
+            menuCurrentRoom.style.borderTop = "1px solid black"
+            menuCurrentRoom.style.backgroundColor = "white"
             // button.className = "buttonClient"
             // button.innerText = clientNamespace + " - " + clientId + " - " + clientRoom + " - " + clientName
             // clientsList.append(button)
             // clientsList.append(br)
-            
+
+            //check if correct client
             if(socket.id == clientId)
             {
+                //update elements
                 if(clientName == "")
                 {
-                    info.append("your name: " + "anon" + clientId.substring(0, 4).toUpperCase())
+                    menuCurrentName.append("current name: " + "anon" + clientId.substring(0, 4).toUpperCase())
+                    menuCurrentRoom.append("current room: " + clientRoom)
+                    menuCurrentName.append(br)
+                    menuCurrentRoom.append(br)
                 }
                 else if(clientName != "")
                 {
-                    info.append("your name: " + clientName)
+                    menuCurrentName.append("current name: " + clientName)
+                    menuCurrentRoom.append("current room: " + clientRoom)
+                    menuCurrentName.append(br)
+                    menuCurrentRoom.append(br)
                 }
-                info.append(br)
             }
         }
 
         //sort user info
         for(c in clientInfo)
         {
+            //variables
             let clientId = clientInfo[c].id
             let clientNamespace = clientInfo[c].namespace
             let clientRoom = clientInfo[c].room
-            let clientName = clientInfo[c].name            
-            // let button = document.createElement('button')
-            let button = document.createElement('text')
-            let br = document.createElement('br')
+            let clientName = clientInfo[c].name
             
-            button.className = "buttonUser"
+            //elements
+            let p = document.createElement('p')
+            // let button = document.createElement('button')
+            
+            //create client info paragraph
+            p.className = "buttonUser"
+            p.style.width = "auto"
+            p.style.padding = "10px"
+            p.style.margin = "0px"
+            p.style.color = "black"
+            p.style.textAlign = "center"
+            p.style.userSelect = "none"
+            p.style.borderTop = "1px solid black"
+            p.style.backgroundColor = "white"
 
+            //null check
             if(clientName == "")
             {
-                button.innerText = "anon" + clientId.substring(0, 4).toUpperCase()
+                p.innerText = "anon" + clientId.substring(0, 4).toUpperCase()
             }
             else if(clientName != "")
             {
-                button.innerText = clientName
+                p.innerText = clientName
             }
-            usersList.append(button)
-            usersList.append(br)
+
+            //update elements
+            usersList.append(p)
         }
 
         //sort namespaces
@@ -540,23 +582,25 @@
         //     namespacesList.append(br)
         // }
 
-        //display chat or not
+        //check if selected room exists
         for(n in clientInfo)
         {
+            //variables
             let name = clientInfo[n].id
             let room = clientInfo[n].room
             
+            //check correct client
             if(name == socket.id)
             {
+                //updat elements
                 inputCurrentRoom.innerText = room
-                mobileInputCurrentRoom.innerText = room
                 
+                //null check
                 if(room == "")
                 {
                     chat.style.display = "none"
                     chatBox.style.display = "none"
                     inputCurrentRoom.innerText = "no room selected"
-                    mobileInputCurrentRoom.innerText = "no room selected"
                 }
                 else if(room != "")
                 {
@@ -577,26 +621,26 @@
         }
 
         //sort default rooms
-        defaultRooms = ['general', 'gaming', 'food']
         for(let c = 0; c < 3; c++)
         {
+            //elements
             let div = document.createElement('div')
             let button0 = document.createElement('text')
             let button1 = document.createElement('text')
             let button2 = document.createElement('button')
-            let divMobile = document.createElement('div')
-            let buttonMobile0 = document.createElement('text')
-            let buttonMobile1 = document.createElement('text')
-            let buttonMobile2 = document.createElement('button')
             // let br = document.createElement('br')
+
+            //variables
             let count = "0"
             
+            //debugging
             // console.log(roomName)
             // console.log(roomClients)
 
+            //reset elements
             button2.style.border = "0px solid black"
-            buttonMobile2.style.border = "0px solid black"
 
+            //count rooms
             for(r in allRooms)
             {
                 if(allRooms[r].room == defaultRooms[c])
@@ -606,13 +650,7 @@
                 }
             }
 
-            // button0.innerText = " (" + count + ") "
-            // button1.innerText =  " " + defaultRooms[c] + " "
-            // button1.className = "room"
-            // button2.className = "buttonJoin"
-            // button2.innerText = "join"
-            // button2.style.backgroundColor = "lightgreen"
-            // button2.onclick = function(){joinRoom(defaultRooms[c])}
+            //add leave room button
             if(defaultRooms[c] == inputCurrentRoom.innerText)
             {
                 //desktop menu
@@ -626,18 +664,6 @@
                 div.id = "room-menu-" + defaultRooms[c]
                 div.style.backgroundColor = "red"
                 div.onclick = function(){leaveRoom(defaultRooms[c])}
-                
-                //mobile menu
-                // buttonMobile0.innerText = " - (" + count + ") "
-                // buttonMobile1.innerText =  " - " + defaultRooms[c] + " "
-                // buttonMobile1.className = "room"
-                // buttonMobile1.onclick = function(){leaveRoom(defaultRooms[c])}
-                buttonMobile2.className = "buttonLeave"
-                buttonMobile2.innerText = "leave" + " - " + defaultRooms[c] + " - " + "(" + count + ") "
-                buttonMobile2.style.backgroundColor = "red"
-                divMobile.id = "room-menu-mobile-" + defaultRooms[c]
-                divMobile.style.backgroundColor = "red"
-                divMobile.onclick = function(){leaveRoom(defaultRooms[c])}
             }
             else if(defaultRooms[c] != inputCurrentRoom.innerText)
             {
@@ -652,73 +678,45 @@
                 div.id = "room-menu-" + defaultRooms[c]
                 div.style.backgroundColor = "lightgreen"
                 div.onclick = function(){joinRoom(defaultRooms[c])}
-
-                //mobile menu
-                // buttonMobile0.innerText = " - (" + count + ") "
-                // buttonMobile1.innerText =  " - " + defaultRooms[c] + " "
-                // buttonMobile1.className = "room"
-                // buttonMobile1.onclick = function(){joinRoom(defaultRooms[c])}
-                buttonMobile2.className = "buttonLeave"
-                buttonMobile2.innerText = "join" + " - " + defaultRooms[c] + " - " + "(" + count + ")"
-                buttonMobile2.style.backgroundColor = "lightgreen"
-                divMobile.id = "room-menu-mobile-" + defaultRooms[c]
-                divMobile.style.backgroundColor = "lightgreen"
-                divMobile.onclick = function(){joinRoom(defaultRooms[c])}
             }
 
-            
-            //desktop menu
-            div.style.border = "1px solid black"
+            //update desktop elements
+            div.style.borderTop = "1px solid black"
+            div.style.padding = "10px"
+            div.style.textAlign = "center"
             div.append(button2)
+            allRoomsList.append(div)
             // div.append(button0)
             // div.append(button1)
-            allRoomsList.append(div)
-            
-            //mobile menu
-            // divMobile.style.border = "1px solid black"
-            divMobile.append(buttonMobile2)
-            // divMobile.append(buttonMobile0)
-            // divMobile.append(buttonMobile1)
-            mobileMenuAllRooms.append(divMobile)
-
         }        
-        console.log(allRooms)
         
         //sort user rooms
         for(r in allRooms)
         {
-            let roomIsDefault = false
-            let roomName = allRooms[r].room
-            let roomClients = allRooms[r].clients
-
+            //elements
             let div = document.createElement('div')
             let button0 = document.createElement('text')
             let button1 = document.createElement('text')
             let button2 = document.createElement('button')
-
-            let divMobile = document.createElement('div')
-            let buttonMobile0 = document.createElement('text')
-            let buttonMobile1 = document.createElement('text')
-            let buttonMobile2 = document.createElement('button')
-
-            // let br = document.createElement('br')
+            
+            //variables
+            let roomIsDefault = false
+            let roomName = allRooms[r].room
+            let roomClients = allRooms[r].clients
             let count = roomClients.length
 
+            //reset elements
             button2.style.border = "0px solid black"
-            buttonMobile2.style.border = "0px solid black"
 
             //check if room is default room
             for(dr in defaultRooms)
             {
-                // console.log(defaultRooms[dr])
-                if(allRooms[r].room == defaultRooms[dr])
-                {
-                    roomIsDefault = true
-                }
+                if(allRooms[r].room == defaultRooms[dr]) { roomIsDefault = true }
             }
 
             if(roomIsDefault == false)
             {
+                //debugging
                 // console.log(roomName)
                 // console.log(roomClients)
                 
@@ -726,11 +724,6 @@
                 // button0.innerText = " - (" + count + ") "
                 // button1.innerText = " - " + roomName + " "
                 // button1.className = "room"
-
-                //mobile menu
-                // buttonMobile0.innerText = " - (" + count + ") "
-                // buttonMobile1.innerText = " - " + roomName + " "
-                // buttonMobile1.className = "room"
 
                 if(roomName == inputCurrentRoom.innerText)
                 {
@@ -745,18 +738,6 @@
                     div.id = "room-menu-" + roomName
                     div.style.backgroundColor = "red"
                     div.onclick = function(){leaveRoom(roomName)}
-
-                    //mobile menu
-                    // buttonMobile0.innerText = " - (" + count + ") "
-                    // buttonMobile1.innerText = " - " + roomName + " "
-                    // buttonMobile1.className = "room"
-                    buttonMobile2.className = "buttonLeave"
-                    buttonMobile2.innerText = "leave" + " - " + roomName + " - " + "(" + count + ")"
-                    buttonMobile2.style.backgroundColor = "red"
-                    buttonMobile2.onclick = function(){leaveRoom(roomName)}
-                    divMobile.id = "room-menu-mobile-" + roomName
-                    divMobile.style.backgroundColor = "red"
-                    divMobile.onclick = function(){leaveRoom(roomName)}
                 }
                 else if(roomName != inputCurrentRoom.innerText)
                 {
@@ -771,132 +752,98 @@
                     div.id = "room-menu-" + roomName
                     div.style.backgroundColor = "lightgreen"
                     div.onclick = function(){joinRoom(roomName)}
-                    
-                    //mobile menu
-                    // buttonMobile0.innerText = " - (" + count + ") "
-                    // buttonMobile1.innerText = " - " + roomName + " "
-                    // buttonMobile1.className = "room"
-                    buttonMobile2.className = "buttonJoin"
-                    buttonMobile2.innerText = "join" + " - " + roomName + " - " + "(" + count + ")"
-                    buttonMobile2.style.backgroundColor = "lightgreen"
-                    buttonMobile2.onclick = function(){joinRoom(roomName)}
-                    divMobile.id = "room-menu-mobile-" + roomName
-                    divMobile.style.backgroundColor = "lightgreen"
-                    divMobile.onclick = function(){joinRoom(roomName)}
                 }
                 
                 //desktop menu
-                div.style.border = "1px solid black"
+                div.style.borderTop = "1px solid black"
+                div.style.padding = "10px"
+                div.style.textAlign = "center"
                 div.append(button2)
                 // div.append(button0)
                 // div.append(button1)
                 allRoomsList.append(div)
-                
-                //mobileMenu
-                // divMobile.style.border = "0px solid black"
-                divMobile.append(buttonMobile2)
-                // divMobile.append(buttonMobile0)
-                // divMobile.append(buttonMobile1)
-                mobileMenuAllRooms.append(divMobile)
             }
         }
-
-        // info.append("total clients: ")
-        // var br = document.createElement('br')
-        // info.append(br)
-        // info.append("your socket namespace: " + socket.nsp)
-        // var br = document.createElement('br')
-        // info.append(br)
-        // info.append("your socket id: " + socket.id)
-
-        //scroll current mobile room button into view
-        if(inputCurrentRoom.innerText != "")
-        {
-            try {
-                let roomButton = document.getElementById("room-menu-mobile-" + inputCurrentRoom.innerText)
-                let roomButtonPos = roomButton.getBoundingClientRect()
-                roomButtonPos.x -= 310
-                mobileMenuAllRooms.scrollTo(roomButtonPos)
-                
-            } catch (error) {
-                // console.log(error)
-            }
-        }
-    });
-
+    })
 
     socket.on('leave room', function(msg) {
+        //debugging
         console.log("msg")
         
-        var item = document.createElement('li');
+        //elements
+        let item = document.createElement('li')
         let time = currentTimeStamp()
         
-        item.textContent = time + " " + msg;
-        messages.appendChild(item);
+        //set message text
+        item.textContent = time + " " + msg
 
-        // console.log(chat)
-        // console.log(chat.scrollHeight)
+        //add message to array
+        messages.appendChild(item)
 
-        chat.scrollTo(0, chat.scrollHeight);
-    });
+        //update scrollbar
+        chat.scrollTo(0, chat.scrollHeight)
+    })
 
 
     socket.on('join room', function(msg) {
+        //debugging
         console.log(msg)
 
-        var item = document.createElement('li');
+        //variables
+        let item = document.createElement('li')
         let time = currentTimeStamp()
 
-        item.textContent = time  + " " + msg;
-        messages.appendChild(item);
+        //set message text
+        item.textContent = time  + " " + msg
 
-        // console.log(chat)
-        // console.log(chat.scrollHeight)
+        //add message to array
+        messages.appendChild(item)
 
-        chat.scrollTo(0, chat.scrollHeight);
-    });
+        //update scrollbar
+        chat.scrollTo(0, chat.scrollHeight)
+    })
 
 
     socket.on('create room', function(msg) {
+        //debugging
         console.log(msg)
 
-        var item = document.createElement('li');
+        //variables
+        let item = document.createElement('li')
         let time = currentTimeStamp()
 
-        item.textContent = time + " " + msg;
-        messages.appendChild(item);
+        //set message text
+        item.textContent = time + " " + msg
 
-        // console.log(chat)
-        // console.log(chat.scrollHeight)
+        //add message to array
+        messages.appendChild(item)
 
-        chat.scrollTo(0, chat.scrollHeight);
-    });
+        //update scrollbar
+        chat.scrollTo(0, chat.scrollHeight)
+    })
 </script>
 
 <style>
+    /*** scrollbar ***/
+    /* ::-webkit-scrollbar { width: 0px; } */
+
     /*** elements ***/
-    body { margin: 0; padding-bottom: 0; overflow: hidden; font-family: Arial, Helvetica, sans-serif; }
+    body { margin: 0; padding-bottom: 0; overflow: hidden; font-family: Arial, Helvetica, sans-serif; background-color: black; }
     button { border-radius: 0%; outline: none; color: black; }
 
 
     /*** ids ***/
-    #chat { height: 94vh; width: calc(80% - 3px); right: 0; overflow-y: scroll; border-left: 1px solid black; }
+    #chat { height: 60vh; width: 40vw; margin: auto; overflow-y: auto; border: 1px solid white; background-color: white; }
     /* #form { height: 6%; border: 1px solid black; background: lightgray; margin-right: 1px; padding: 10px; padding-bottom: 10px; position: fixed; bottom: 0; right: 0; display: flex; box-sizing: border-box; backdrop-filter: blur(10px); } */
     /* #form > button { background: #333; border: 1px solid #333; outline: none; color: #fff; } */
     #inputChatMessage 
     { 
-        display: inline-block; 
-        height: 40px; 
-        width: 40%; 
-        margin: 2px; 
-        margin-left: 10%; 
-        padding: 0px; 
-        padding-left: 10px; 
-        padding-right: 10px; 
+        display: inline-block;
+        height: 40px;
+        width: 80%; 
+        margin: -2px 0px 0px 0px;
+        padding: 0px 10px 0px 10px;
         font-size: 16px; 
-        border: 4px solid black; 
-        border-right: 0px; 
-        border-bottom: 1px solid white; 
     }
     #inputChatMessage:focus { outline: none; }
     #menu 
@@ -905,11 +852,13 @@
         display: block;
         top: 0px;
         right: 0px; 
-        height: 94%; 
-        width: 20%; 
-        margin: 0px; 
-        overflow-y: scroll; 
-        border-right: 1px solid black; 
+        height: 100vh; 
+        width: 100vw; 
+        margin: 0px;    
+        padding: 0px;
+        z-index: 2;
+        overflow-y: hidden; 
+        overflow-x: hidden; 
         background-color: black; 
     }
     #menu::-webkit-scrollbar { width: 0px; }
@@ -920,38 +869,31 @@
     /* #chat { scrollbar-width: thin; scrollbar-color: black lightgray; } */
     #chatBox 
     { 
-        position: fixed;
-        width: 20%; 
+        position: relative;
+        width: 40vw; 
         bottom: 0px;
-        right: 0px;
-        margin: 0px; 
-        padding: 0px; 
-        padding-top: 4px; 
-        text-align: center; 
+        left: 0px;
+        margin: auto; 
+        padding: 0px;
+        text-align: center;
+        border: 1px solid white;
     }
     #currentRoomInfo 
     { 
         display: block; 
-        width: 100%; 
-        padding: 16px; 
+        width: 40vw;
+        margin: auto;
+        margin-top: 13vh;
+        padding: 16px 0px 16px 0px; 
         text-align: center; 
-        user-select: none; 
-        color: white; 
+        user-select: none;
+        font-size: 20px;
+        color: white;
+        border: 1px solid white;
         background-color: black; 
     } 
-    #mobileCurrentRoomInfo 
-    { 
-        display: block; 
-        width: 100%; 
-        padding: 16px; 
-        text-align: center;
-        user-select: none; 
-        color: white; 
-        background-color: black; 
-    }
-    #mobileCurrentRoomInfo { display: none; }
     #messages { list-style-type: none; margin: 0; padding: 0; }
-    #messages > li { padding: 20px; }
+    #messages > li { padding: 16px; }
     #messages > li:nth-child(even) { background: white; }
     #messages > li:nth-child(odd) { background: #efefef; }
     #buttonLeaveRoomTest { margin-left: -4px; }
@@ -968,19 +910,18 @@
         color: white; 
         background-color: red; 
     }
-    #flex { display: flex; height: 94vh; width: 100vw; flex-wrap: wrap; align-content: flex-start; background-color: white; }
-    /* #flex > div { display: block; width: 100%; border: 1px solid black } */
-    #buttonSend { display: inline-block; margin: 0px; margin-left: -7px; padding: 10px; height: 42px; }
-    #info { display: none; } 
-    #usersList { display: none; } 
-    #createRoom { display: none; } 
-    #addUsername { display: none; } 
-    #allRoomsList { display: none; }
-    #infoTitle { display: block; margin: 0px; padding: 7px; font-weight: bold; user-select: none; border: 1px solid black; background-color: white; } 
-    #allUsersTitle { display: block; margin: 0px; padding: 7px; font-weight: bold; user-select: none; border: 1px solid black; background-color: white; } 
-    #allRoomsTitle { display: block; margin: 0px; padding: 7px; font-weight: bold; user-select: none; border: 1px solid black; background-color: white; } 
-    #createRoomTitle { display: block; margin: 0px; padding: 7px; font-weight: bold; user-select: none; border: 1px solid black; background-color: white; } 
-    #addUsernameTitle { display: block; margin: 0px; padding: 7px; font-weight: bold; user-select: none; border: 1px solid black; background-color: white; }
+    #main { display: block; height: auto; width: 100vw; flex-wrap: wrap; align-content: flex-start; background-color: black; }
+    /* #main > div { display: block; width: 100%; border: 1px solid black } */
+    #buttonSend 
+    { 
+        display: inline-block; 
+        height: 42px; 
+        width: calc(20% - 20px); 
+        margin: 1px 0px 0px -10px; 
+        padding: 0px 10px 0px 10px;
+        font-weight: bold;
+        border: 0px solid black;
+    }
     #modal 
     {  
         margin: 0;
@@ -991,82 +932,109 @@
         transform: translate(-50%, -50%); background-color: red;
         border: 1px solid black; 
      }
-     #mobileMenuCurrentRoom, #mobileMenuAllRooms { display: none; }
-     #mobileMenuHide, #mobileMenuShow { display: none; }
-     #allUsersTitle { display: none; }
-     #inputCreateRoom { width: calc(100% - 8px); font-weight: normal; font-size: 17px; } 
-     #inputAddUser { width: calc(100% - 8px); font-weight: normal; font-size: 17px; } 
-     #buttonCreateRoomTest { width: calc(100% - 8px); font-weight: normal; font-size: 17px; } 
-     #buttonAddUserTest { width: calc(100% - 8px); font-weight: normal; font-size: 17px; }
-     #createRoom { padding: 10px; background-color: gray; } 
-     #addUsername { padding: 10px; background-color: gray; } 
-     #allRoomsList { padding: 10px; background-color: gray; } 
-     #info { padding: 10px; background-color: gray; }
+     #allUsersTitle { display: block; }
+     #inputCreateRoom { width: calc(100% - 24px); padding: 10px; font-weight: normal; font-size: 17px; } 
+     #inputAddUser { width: calc(100% - 24px); padding: 10px; font-weight: normal; font-size: 17px; } 
+     #buttonCreateRoom 
+     { 
+        width: calc(100% - 8px); 
+        padding: 10px; 
+        font-weight: normal; 
+        font-size: 17px; 
+     } 
+     #buttonAddUsername { width: 100%; padding: 10px; font-weight: normal; font-size: 17px; }
+     #menuImg { position: fixed; height: 40px; width: 40px; top: calc(13vh + 8px); right: calc(30vw + 10px); }
+     #menuOptions { max-height: 60vh; width: 30vw; margin: auto; margin-top: 13vh; overflow-y: auto; }
+     #buttonExitMenu 
+     { 
+        width: 30vw; 
+        margin: auto; 
+        padding: 16px 0px 16px 0px; 
+        font-weight: bold; 
+        font-size: 30px; 
+        text-align: center;
+        user-select: none;
+        cursor: default;
+        color: white;
+        border-top: 1px solid white;
+    }
+    #menuOptionsTitle 
+    { 
+        display: none;
+        width: 100%; 
+        margin: 0px;
+        padding: 0px 0px 20px 0px; 
+        font-weight: bold; 
+        font-size: 20px; 
+        text-align: center;
+        user-select: none;
+        cursor: default;
+        color: white;
+        /* border-bottom: 1px solid white; */
+    }
+    #menuCurrentName { display: block; color: white; }
+    #menuCurrentRoom { display: block; color: white; }
+    #buttonBackToMenu 
+    {
+        display: none;
+        width: 30vw; 
+        margin: auto;
+        padding: 16px 0px 16px 0px; 
+        font-weight: bold; 
+        font-size: 30px; 
+        text-align: center;
+        user-select: none;
+        cursor: default;
+        color: white;
+        /* border-top: 1px solid white; */
+    }
+    #menuInfo { display: block; width: 30vw; margin: auto; }
 
 
     /*** classes ***/
-    .buttonJoin, .buttonLeave { padding: 3px; overflow-wrap: break-word; font-weight: normal; font-size: 17px; }
-    .buttonClient, .buttonUser, .buttonNamespace { width: 100%; }
-    .buttonCreate, #buttonAddUserTest, #buttonCreateRoomTest { width: calc(100%); border-color: lightgray; }
+    .buttonJoin { padding: 3px; overflow-wrap: break-word; font-weight: normal; font-size: 17px; } 
+    .buttonLeave { padding: 3px; overflow-wrap: break-word; font-weight: normal; font-size: 17px; }
+    .buttonClient { width: 100%; } 
+    .buttonUser { width: 100%; } 
+    .buttonNamespace { width: 100%; }
+    .buttonCreate { width: calc(100%); border-color: lightgray; }
     .buttonUser {}
     .buttonNamespace {}
     .errorMessage { display: none; padding: 20px; width: auto; background-color: red; border: 7px solid black; }
+    .menuCategory { display: none; width: auto; color: white; }
+    .menuCategoryTitle 
+    { 
+        display: block; 
+        width: auto; 
+        margin: auto;
+        padding: 16px 16px 16px 10px; 
+        font-weight: bold;
+        font-size: 18px;  
+        user-select: none;
+        color: white;
+        border-top: 1px solid white;
+    }
 
     
     /*** mobile ***/
     @media screen and (max-width: 1300px) {
-      body { background-color: transparent; font-size: 240%; overflow: scroll; }
+        li { font-size: 40px; }
 
-      #flex > div { width: 100%; border: 1px solid black }
-      /* #flex > div { display: block; width: 100%; border: 1px solid black } */
-      #menu { height: auto; }
-      #menu > div { padding: 20px; }
-      #mobileMenuCurrentRoom, #mobileMenuAllRooms { display: block; }
-      #inputChatMessage 
-      { 
-        display: inline-block; 
-        height: 71px; 
-        width: 83%; 
-        margin: 1px; 
-        margin-top: 6px; 
-        padding: 0px; 
-        padding-left: 10px; 
-        padding-right: 10px; 
-        font-size: 40px; 
-      }
-      #chat { height: 66%; }
-      #currentRoomInfo, #allRoomsTitle { display: none; }
-      #mobileCurrentRoomInfo { padding: 30px; display: block; }
-      #buttonSend { height: 72px; margin-left: -14px; padding: 10px; font-size: 40px; }
-      #mobileMenuAllRooms 
-      { 
-        display: flex; 
-        margin: 0px; 
-        padding: 0px; 
-        padding-left: 20px; 
-        padding-right: 20px; 
-        overflow-x: scroll; 
-        background-color: gray; 
-      }
-      #mobileMenuAllRooms > div { position: relative; display: inline-flex; margin: 30px 20px 30px 20px }
-      #createRoom, #addUsername { display: block; }
-      #createRoom, #addUsername > button, input { display: block; margin: 0px; padding: 0px; font-size: 40px; }
-      #buttonCreateRoomTest { display: inline-block; font-size: 40px; }
-      #createRoom, #addUsername { display: none; background-color: gray; }
-      #inputCreateRoom, #buttonCreateRoomTest, #inputAddUser, #buttonAddUserTest { height: 60px; }
-      #inputCreateRoom, #inputAddUser { padding-left: 20px; padding-right: 20px; width: calc(96% - 6px); font-size: 40px; }
-      #buttonCreateRoomTest, #buttonAddUserTest { width: calc(100% + 2px); }
-      #chatBox { position: fixed; bottom: 0px; height: 90px; padding-top: 10px; padding-bottom: 10px; }
-      #allRoomsList { display: none; }
-      #info { background-color: gray; }
-      #infoTitle { border: 2px solid black; } 
-      #allUsersTitle { border: 2px solid black; } 
-      #allRoomsTitle { border: 2px solid black; } 
-      #createRoomTitle { border: 2px solid black; } 
-      #addUsernameTitle { border: 2px solid black; }
-      #messages > li { padding: 40px; }
+        #main { height: 100vh; width: 100vw; margin: auto; font-size: 18px; }
+        #currentRoomInfo { width: 100%; margin: 0px; font-size: 60px; }
+        #chat { height: 90%; width: 100%; }
+        #chatBox { width: 100%; }
+        #menuImg { height: 80px; width: 80px; top: 8px; right: 10px; }
+        #message { font-size: 30px; }
+        #menuOptionsTitle { font-size: 60px; }
+        #menuOptions { width: 80vw; margin-top: 20vh; overflow-x: hidden; }
+        #buttonExitMenu { width: 80vw; font-size: 80px; }
+        #buttonBackToMenu { width: 80vw; font-size: 80px; }
+        #inputChatMessage { font-size: 40px; }
+        #menuCurrentName { width: 100%; }
+        #menuCurrentRoom { width: 100%; }
+        #menuInfo { display: none; width: 80vw; font-size: 49px; }
 
-      .buttonLeave, .buttonJoin { min-height: 100px; min-width: 400px; padding: 10px; font-size: 40px; overflow-wrap: break-word; }
-      .errorMessage { display: none; padding: 20px; width: calc(94% + 4px); background-color: red; border: 7px solid black; }
+        .menuCategoryTitle { font-size: 49px; padding: 30px 30px 30px 10px; }
     }
   </style>

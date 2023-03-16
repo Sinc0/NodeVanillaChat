@@ -76,7 +76,6 @@ function updateInfo(client, socketId, clientIp, clientNsp, clientName)
             if(user.socketId == clientId)
             {
                 clientName = user.username
-                console.log("clientName: " + clientName)
 
                 //debugging
                 // console.log("clientName: " + clientName)
@@ -142,9 +141,6 @@ SocketServer.of("/").on('connection', (client) => {
 
     //handle socket stream
     client.on('chat message', (msgObj) => {
-        //debugging
-        // console.log("\nchat message")
-
         //handle client username
         for (u in serverUsers)
         {
@@ -172,12 +168,12 @@ SocketServer.of("/").on('connection', (client) => {
 
         //send socket message       
         SocketServer.sockets.in(msgObj.room).emit('chat message', msgObj)
+
+        //log
+        console.log(msgObj.room + " - " + msgObj.userName + " - " + msgObj.content)
     })
         
     client.on('leave room', (msg) => {
-        //debugging
-        // console.log("\nleave room")
-
         //leave socket room
         client.leave(msg)
 
@@ -207,6 +203,9 @@ SocketServer.of("/").on('connection', (client) => {
 
         //send socket message
         SocketServer.sockets.in(msg).emit('leave room', clientName + " left the room")
+
+        //log
+        console.log(clientName + " left the room")
     })
 
     client.on('join room', (msg) => {
@@ -249,6 +248,10 @@ SocketServer.of("/").on('connection', (client) => {
         //send socket messages
         SocketServer.sockets.in(oldRoom).emit('leave room', clientName + " left the room")
         SocketServer.sockets.in(newRoom).emit('join room', clientName + " joined the room")
+
+        //log
+        console.log(oldRoom + " - " + clientName + " - " + "left the room")
+        console.log(newRoom + " - " + clientName + " - " + "joined the room")
     })
 
     client.on('create room', (msg) => {
@@ -297,6 +300,11 @@ SocketServer.of("/").on('connection', (client) => {
         SocketServer.sockets.in(oldRoom).emit('leave room', clientName + " left the room")
         SocketServer.sockets.in(newRoom).emit('create room', newRoom + " room created")
         SocketServer.sockets.in(newRoom).emit('join room', clientName + " joined the room")
+
+        //log
+        console.log(oldRoom + " - " + clientName + " - " + "left the room")
+        console.log(newRoom + " - " + "room created")
+        console.log(newRoom + " - " + clientName + " - " + "joined the room")
     })
     
     client.on('disconnect', () => {
@@ -305,6 +313,9 @@ SocketServer.of("/").on('connection', (client) => {
 
         //update elements
         updateInfo(client)
+
+        //log
+        console.log("client disconnected")
     })
 
     client.on('add user', (userObj) => {
@@ -355,11 +366,11 @@ SocketServer.of("/").on('connection', (client) => {
             }
         }
             
-        //debugging
-        console.log(serverUsers)
-        
         //update elements
         updateInfo(client)
+
+        //log
+        console.log(userId + " changed username to " + userName)
     })
     
     //update elements

@@ -423,7 +423,7 @@
         aboutTitle.style.borderBottom = "1px solid white"
         privacyPolicyTitle.style.borderBottom = "1px solid white"
         contactTitle.style.borderBottom = "1px solid white"
-        menuOptions.style.marginTop = "20vh"
+        menuOptions.style.marginTop = "24vh"
 
         //update elements
         if(category == "info")
@@ -484,6 +484,7 @@
         let privacyPolicyTitle = document.getElementById("privacyPolicyTitle")
         let buttonExitMenu = document.getElementById("buttonExitMenu")
         let buttonBackToMenu = document.getElementById("buttonBackToMenu")
+        let menuOptions = document.getElementById("menuOptions")
 
         //reset elements
         // menuInfo.style.display = "none"
@@ -513,6 +514,8 @@
         chatTitle.style.borderBottom = "1px solid white"
         aboutTitle.style.borderBottom = "1px solid white"
         privacyPolicyTitle.style.borderBottom = "1px solid white"
+
+        menuOptions.style.marginTop = "24vh"
     }
 
 
@@ -1149,6 +1152,7 @@
         font-weight: bold; 
         text-align: left;
         text-shadow: 1px 1px black; 
+        user-select: none;
         overflow-wrap: break-word; 
         color: white; 
         background-color: red;
@@ -1161,6 +1165,7 @@
         font-weight: bold;
         text-align: left;
         text-shadow: 1px 1px black; 
+        user-select: none;
         overflow-wrap: break-word; 
         color: white; 
         background-color: lightgreen; 
@@ -1172,7 +1177,7 @@
         li { font-size: 40px; }
 
         #main { height: 99vh; width: 99vw; margin: auto; font-size: 18px; }
-        #currentRoomInfo { width: 100%; margin: 0px; padding-bottom: 20px; font-size: 49px; border: 0px solid black; }
+        #currentRoomInfo { width: 100%; margin: 0px; padding: 20px 0px 20px 0px; font-size: 49px; border: 0px solid black; }
         #chat { height: 84vh; width: 99vw; margin-left: -1px; }
         #chatBox { width: 100%; }
         #menuImg { height: 90px; width: 90px; top: 0px; right: 4px; }

@@ -29,7 +29,7 @@
                 <!-- info -->
                 <!-- <p id="infoTitle" class="menuCategoryTitle" onclick="displayMenuCategory('info')"><b>Info</b></p> -->
                 <div id="menuInfo" class="menuCategory">
-                    <div id="menuCurrentName" class="menuCategory"></div>
+                    <!-- <div id="menuCurrentName" class="menuCategory"></div> -->
                     <div id="menuCurrentRoom" class="menuCategory"></div>
                 </div>
     
@@ -42,43 +42,50 @@
                 <div id="allRoomsList" class="menuCategory"></div>
     
                 <!-- create room -->
-                <p id="createRoomTitle" class="menuCategoryTitle" onclick="displayMenuCategory('createRoom')">Create Room</p>
+                <!-- <p id="createRoomTitle" class="menuCategoryTitle" onclick="displayMenuCategory('createRoom')">Create Room</p> -->
                 <div id="createRoom" class="menuCategory">
                     <div id="errorMessageCreateRoom" class="errorMessage"></div>
                     <input id="inputCreateRoom" maxlength="40" placeholder="room name..." />
-                    <button id="buttonCreateRoom" class="buttonCreate">Confirm</button>
+                    <button id="buttonCreateRoom" class="buttonCreate">create room</button>
                 </div>
 
                 <!-- add username -->
-                <p id="addUsernameTitle" class="menuCategoryTitle" onclick="displayMenuCategory('changeUsername')">Add Username</p>
+                <p id="addUsernameTitle" class="menuCategoryTitle" onclick="displayMenuCategory('changeUsername')">Username</p>
                 <div id="addUsername" class="menuCategory">
-                    <div id="errorMessageAddUsername" class="errorMessage"></div>
-                    <input id="inputAddUser" maxlength="40" placeholder="username..." />
-                    <button id="buttonAddUsername" class="buttonCreate">Confirm</button>
-                </div>
-
-                <!-- privacy policy -->
-                <p id="privacyPolicyTitle" class="menuCategoryTitle" onclick="displayMenuCategory('privacyPolicy')"><b>Privacy Policy</b></p>
-                <div id="privacyPolicy" class="menuCategory">
-                    <p class="privacyPolicyItem">Collects Account Data: <span class="no">No</span></p>
-                    <p class="privacyPolicyItem">Collects Personal Data: <span class="no">No</span></p>
-                    <p class="privacyPolicyItem">Collects Device Data: <span class="no">No</span></p>
-                    <p class="privacyPolicyItem">Collects Metrics Data: <span class="no">No</span></p>
-                    <p class="privacyPolicyItem">Collects Diagnostics Data: <span class="no">No</span></p>
-                    <p class="privacyPolicyItem">Collects Location Data: <span class="no">No</span></p>
-                    <p class="privacyPolicyItem">Collects Financial Data: <span class="no">No</span></p>
-                    <p class="privacyPolicyItem">Collects Messages Data: <span class="no">No</span></p>
-                    <p class="privacyPolicyItem">Collects Media Data: <span class="no">No</span></p>
-                    <p class="privacyPolicyItem">Uses Cookies: <span class="no">No</span></p>
-                    <p class="privacyPolicyItem">Uses Local Storage: <span class="no">No</span></p>
-                    <p class="privacyPolicyItem">Links to Other Websites: <span class="no">No</span></p>
-                    <p class="privacyPolicyItem">Policy Might Change in the Future: <span class="yes">Yes</span></p>
+                    <div id="menuCurrentName" class="menuCategory"></div>
+                    <div id="errorChangeUsername" class="errorMessage"></div>
+                    <input id="inputChangeUsername" maxlength="40" placeholder="new username..."    />
+                    <button id="buttonChangeUsername" class="buttonCreate">change username</button>
                 </div>
 
                 <!-- about -->
                 <p id="aboutTitle" class="menuCategoryTitle" onclick="displayMenuCategory('about')"><b>About</b></p>
                 <div id="about" class="menuCategory">
-                    <p>Test</p>
+                    <!-- why -->
+                    <p id="aboutText">This is a student project, made to learn about Socket.IO</p>
+                    
+                    <!-- privacy policy -->
+                    <p id="privacyPolicyTitle" class="menuCategoryTitle"><b>Privacy Policy</b></p>
+                    <div id="privacyPolicy" class="menuCategory">
+                        <p class="privacyPolicyItem">Collects Account Data: <span class="no">No</span></p>
+                        <p class="privacyPolicyItem">Collects Personal Data: <span class="no">No</span></p>
+                        <p class="privacyPolicyItem">Collects Device Data: <span class="no">No</span></p>
+                        <p class="privacyPolicyItem">Collects Metrics Data: <span class="no">No</span></p>
+                        <p class="privacyPolicyItem">Collects Diagnostics Data: <span class="no">No</span></p>
+                        <p class="privacyPolicyItem">Collects Location Data: <span class="no">No</span></p>
+                        <p class="privacyPolicyItem">Collects Financial Data: <span class="no">No</span></p>
+                        <p class="privacyPolicyItem">Collects Messages Data: <span class="no">No</span></p>
+                        <p class="privacyPolicyItem">Collects Media Data: <span class="no">No</span></p>
+                        <p class="privacyPolicyItem">Uses Cookies: <span class="no">No</span></p>
+                        <p class="privacyPolicyItem">Uses Local Storage: <span class="no">No</span></p>
+                        <p class="privacyPolicyItem">Links to Other Websites: <span class="no">No</span></p>
+                        <p class="privacyPolicyItem">Policy Might Change in the Future: <span class="yes">Yes</span></p>
+                    </div>
+
+                    <p id="contactTitle" class="menuCategoryTitle"><b>Contact</b></p>
+                    <div id="contact">
+                        <p id="contactText">sinco.developer@gmail.com</p>
+                    </div>
                 </div>
                 
                 <!-- back to menu button -->
@@ -112,7 +119,7 @@
         <!-- chatbox -->
         <div id="chatBox">
             <form id="formChatbox" action="">
-                <input id="inputChatMessage" autocomplete="off" maxlength="1000" placeholder="..." />
+                <input id="inputChatMessage" autocomplete="off" maxlength="200" placeholder="Message..." />
                 <button id="buttonSend">Send</button>
             </form>
         </div>
@@ -275,33 +282,34 @@
     }
 
 
-    function addUser(socketId)
+    function changeUsername(socketId)
     {
         //variables
         let username = null
         let user = null
+        let errorChangeUsername = document.getElementById("errorChangeUsername")
         
         //forbidden character check
-        characterCheck = forbiddenCharacterCheck(inputAddUser.value)
+        let = characterCheck = forbiddenCharacterCheck(inputChangeUsername.value)
 
         if(characterCheck == true)
         {
             // alert("username cannot be empty/contain space or following characters !@<<|,%")
-            let errorMessageAddUsername = document.getElementById("errorMessageAddUsername")
-            errorMessageAddUsername.style.display = "block"
-            errorMessageAddUsername.innerText = "username cannot be empty/contain space or following characters !@<<|,%"
+            errorChangeUsername.style.display = "block"
+            errorChangeUsername.innerText = "invalid username"
+
             return
         }
 
         //null check
-        // if(inputAddUser.value == "")
+        // if(inputChangeUsername.value == "")
         // {
         //     alert("username cannot be empty or contain !@<<|,%")
         //     return
         // }
 
         //set username
-        username = inputAddUser.value
+        username = inputChangeUsername.value
 
         //set user
         user = JSON.parse("{" + "\"socketId\"" + ":" + "\"" + socketId + "\"" + "," + "\"username\"" + ":" + "\"" + username + "\"" + "}")
@@ -311,10 +319,10 @@
         socket.emit('add user', user)
 
         //clear add username input
-        inputAddUser.value = ""
+        inputChangeUsername.value = ""
         
         //clear error message
-        errorMessageAddUsername.style.display = "none"
+        errorChangeUsername.style.display = "none"
 
         //undisplay menu
         undisplayMenu()
@@ -342,6 +350,7 @@
         else if(string.includes("|")) { return true }
         else if(string.includes(",")) { return true }
         else if(string.includes("%")) { return true }
+        else if(string.includes("anon")) { return true }
     }
 
     
@@ -372,7 +381,7 @@
         // let menuInfo = document.getElementById("menuInfo")
         let menuUsers = document.getElementById("usersList")
         let menuRooms = document.getElementById("allRoomsList")
-        let createRoom = document.getElementById("createRoom")
+        // let createRoom = document.getElementById("createRoom")
         let addUsername = document.getElementById("addUsername")
         let about = document.getElementById("about")
         let privacyPolicy = document.getElementById("privacyPolicy")
@@ -381,11 +390,13 @@
         let allRoomsTitle = document.getElementById("allRoomsTitle")
         let createRoomTitle = document.getElementById("createRoomTitle")
         let addUsernameTitle = document.getElementById("addUsernameTitle")
+        let contactTitle = document.getElementById("contactTitle")
         let aboutTitle = document.getElementById("aboutTitle")
         let chatTitle = document.getElementById("chatTitle")
         let privacyPolicyTitle = document.getElementById("privacyPolicyTitle")
         let buttonExitMenu = document.getElementById("buttonExitMenu")
         let buttonBackToMenu = document.getElementById("buttonBackToMenu")
+        let menuOptions = document.getElementById("menuOptions")
 
         //reset elements
         // menuInfo.style.display = "none"
@@ -397,13 +408,22 @@
         // infoTitle.style.display = "none"
         allUsersTitle.style.display = "none"
         allRoomsTitle.style.display = "none"
-        createRoomTitle.style.display = "none"
+        // createRoomTitle.style.display = "none"
         addUsernameTitle.style.display = "none"
         chatTitle.style.display = "none"
         aboutTitle.style.display = "none"
         privacyPolicyTitle.style.display = "none"
+        contactTitle.style.display = "none"
         buttonExitMenu.style.display = "none"
         buttonBackToMenu.style.display = "block"
+        allRoomsTitle.style.borderBottom = "1px solid white"
+        // createRoomTitle.style.borderBottom = "1px solid white"
+        addUsernameTitle.style.borderBottom = "1px solid white"
+        chatTitle.style.borderBottom = "1px solid white"
+        aboutTitle.style.borderBottom = "1px solid white"
+        privacyPolicyTitle.style.borderBottom = "1px solid white"
+        contactTitle.style.borderBottom = "1px solid white"
+        menuOptions.style.marginTop = "20vh"
 
         //update elements
         if(category == "info")
@@ -420,11 +440,7 @@
         {
             menuRooms.style.display = "block"
             allRoomsTitle.style.display = "block"
-        }
-        else if(category == "createRoom")
-        {
             createRoom.style.display = "block"
-            createRoomTitle.style.display = "block"
         }
         else if(category == "changeUsername")
         {
@@ -435,11 +451,14 @@
         {
             aboutTitle.style.display = "block"
             about.style.display = "block"
-        }
-        else if(category == "privacyPolicy")
-        {
+            aboutTitle.style.borderBottom = "0px solid white"
             privacyPolicyTitle.style.display = "block"
             privacyPolicy.style.display = "block"
+            privacyPolicyTitle.style.borderBottom = "0px solid white"
+            contactTitle.style.display = "block"
+            contactTitle.style.borderBottom = "0px solid white"
+            contactTitle.style.marginTop = "30px"
+            menuOptions.style.marginTop = "10vh"
         }
     }
 
@@ -458,7 +477,7 @@
         // let infoTitle = document.getElementById("infoTitle")
         let allUsersTitle = document.getElementById("allUsersTitle")
         let allRoomsTitle = document.getElementById("allRoomsTitle")
-        let createRoomTitle = document.getElementById("createRoomTitle")
+        // let createRoomTitle = document.getElementById("createRoomTitle")
         let addUsernameTitle = document.getElementById("addUsernameTitle")
         let chatTitle = document.getElementById("chatTitle")
         let aboutTitle = document.getElementById("aboutTitle")
@@ -478,7 +497,7 @@
         // infoTitle.style.display = "block"
         allUsersTitle.style.display = "block"
         allRoomsTitle.style.display = "block"
-        createRoomTitle.style.display = "block"
+        // createRoomTitle.style.display = "block"
         addUsernameTitle.style.display = "block"
         chatTitle.style.display = "block"
         aboutTitle.style.display = "block"
@@ -487,6 +506,13 @@
         buttonBackToMenu.style.display = "none"
 
         menu.style.display = "block"
+
+        allRoomsTitle.style.borderBottom = "1px solid white"
+        // createRoomTitle.style.borderBottom = "1px solid white"
+        addUsernameTitle.style.borderBottom = "1px solid white"
+        chatTitle.style.borderBottom = "1px solid white"
+        aboutTitle.style.borderBottom = "1px solid white"
+        privacyPolicyTitle.style.borderBottom = "1px solid white"
     }
 
 
@@ -510,7 +536,7 @@
         if(msg.userName == "anon") { msg.userName = "anon" + msg.userId.substring(0, 4).toUpperCase() }
 
         //set chat message text
-        item.textContent = time + " " + msg.userName + ": " + msg.content
+        item.innerHTML = msg.content + "</span>" + "<br />" + "<span style='display: inline-block; padding: 8px 0px 0px 0px; opacity: 0.4;'>" + time + " · " + msg.userName + "</span>"
 
         //add message to array
         messages.appendChild(item)
@@ -531,10 +557,10 @@
         // console.log(all_namespaces)
 
         //variables
-        defaultRooms = ['general', 'gaming', 'food']
+        defaultRooms = ['General', 'Gaming', 'Food']
         
         //elements
-        let buttonAddUsername = document.getElementById("buttonAddUsername")
+        let buttonChangeUsername = document.getElementById("buttonChangeUsername")
         let allRoomsList = document.getElementById("allRoomsList")
         let menuCurrentName = document.getElementById("menuCurrentName")
         let menuCurrentRoom = document.getElementById("menuCurrentRoom")
@@ -543,7 +569,7 @@
         let allRoomsTitle = document.getElementById("allRoomsTitle")
         
         //update elements
-        buttonAddUsername.onclick = function(){addUser(socket.id)}
+        buttonChangeUsername.onclick = function(){changeUsername(socket.id)}
         allRoomsList.innerHTML = ""
         menuCurrentName.innerHTML = ""
         menuCurrentRoom.innerHTML = ""
@@ -567,16 +593,6 @@
             let br = document.createElement('br')
             
             //update elements
-            menuCurrentName.style.padding = "10px"
-            menuCurrentName.style.userSelect = "none"
-            menuCurrentName.style.color = "black"
-            menuCurrentName.style.borderTop = "1px solid black"
-            menuCurrentName.style.backgroundColor = "white"
-            menuCurrentRoom.style.padding = "10px"
-            menuCurrentRoom.style.userSelect = "none"
-            menuCurrentRoom.style.color = "black"
-            menuCurrentRoom.style.borderTop = "1px solid black"
-            menuCurrentRoom.style.backgroundColor = "white"
             // button.className = "buttonClient"
             // button.innerText = clientNamespace + " - " + clientId + " - " + clientRoom + " - " + clientName
             // clientsList.append(button)
@@ -731,14 +747,8 @@
                 // button1.className = "room"
                 // button1.onclick = function(){leaveRoom(defaultRooms[c])}
                 button2.className = "buttonLeave"
-                button2.innerText = "Leave" + " · " + defaultRooms[c] + " · " + count + " users"
-                button2.style.backgroundColor = "red"
-                button2.style.fontWeight = "bold"
-                button2.style.color = "white"
-                button2.style.fontSize = "18px"
-                button2.style.textShadow = "1px 1px black"
+                button2.innerText = "leave" + " · " + defaultRooms[c] + " · " + count + " users"
                 div.id = "room-menu-" + defaultRooms[c]
-                div.style.backgroundColor = "red"
                 div.onclick = function(){leaveRoom(defaultRooms[c])}
             }
             else if(defaultRooms[c] != inputCurrentRoom.innerText)
@@ -749,20 +759,14 @@
                 // button1.className = "room"
                 // button1.onclick = function(){joinRoom(defaultRooms[c])}
                 button2.className = "buttonJoin"
-                button2.innerText = "Join" + " · " + defaultRooms[c] + " · " + count + " users"
-                button2.style.backgroundColor = "lightgreen"
-                button2.style.fontWeight = "bold"
-                button2.style.color = "white"
-                button2.style.fontSize = "18px"
-                button2.style.textShadow = "1px 1px black"
+                button2.innerText = "join" + " · " + defaultRooms[c] + " · " + count + " users"
                 div.id = "room-menu-" + defaultRooms[c]
-                div.style.backgroundColor = "lightgreen"
                 div.onclick = function(){joinRoom(defaultRooms[c])}
             }
 
             //update desktop elements
             div.style.borderBottom = "1px solid black"
-            div.style.padding = "10px"
+            // div.style.padding = "10px"
             div.style.textAlign = "left"
             div.append(button2)
             allRoomsList.append(div)
@@ -812,15 +816,10 @@
                     // button1.innerText = " - " + roomName + " "
                     // button1.className = "room"
                     button2.className = "buttonLeave"
-                    button2.innerText = "Leave" + " · " + roomName + " · " + count + " users"
-                    button2.style.backgroundColor = "red"
-                    button2.style.fontWeight = "bold"
-                    button2.style.fontSize = "18px"
-                    button2.style.color = "white"
-                    button2.style.textShadow = "1px 1px black"
+                    button2.innerText = "leave" + " · " + roomName + " · " + count + " users"
                     button2.onclick = function(){leaveRoom(roomName)}
                     div.id = "room-menu-" + roomName
-                    div.style.backgroundColor = "red"
+                    // div.style.backgroundColor = "red"
                     div.onclick = function(){leaveRoom(roomName)}
                 }
                 else if(roomName != inputCurrentRoom.innerText)
@@ -830,21 +829,15 @@
                     // button1.innerText = " - " + roomName + " "
                     // button1.className = "room"
                     button2.className = "buttonJoin"
-                    button2.innerText = "Join" + " · " + roomName + " · " + count + " users"
-                    button2.style.backgroundColor = "lightgreen"
-                    button2.style.fontWeight = "bold"
-                    button2.style.fontSize = "18px"
-                    button2.style.color = "white"
-                    button2.style.textShadow = "1px 1px black"
+                    button2.innerText = "join" + " · " + roomName + " · " + count + " users"
                     button2.onclick = function(){joinRoom(roomName)}
                     div.id = "room-menu-" + roomName
-                    div.style.backgroundColor = "lightgreen"
+                    // div.style.backgroundColor = "lightgreen"
                     div.onclick = function(){joinRoom(roomName)}
                 }
                 
                 //desktop menu
-                div.style.borderTop = "1px solid black"
-                div.style.padding = "10px"
+                // div.style.padding = "10px"
                 div.append(button2)
                 // div.append(button0)
                 // div.append(button1)
@@ -853,6 +846,7 @@
         }
     })
 
+    
     socket.on('leave room', function(msg) {
         //debugging
         console.log("msg")
@@ -862,7 +856,7 @@
         let time = currentTimeStamp()
         
         //set message text
-        item.textContent = time + " " + msg
+        item.textContent = msg
 
         //add message to array
         messages.appendChild(item)
@@ -881,7 +875,9 @@
         let time = currentTimeStamp()
 
         //set message text
-        item.textContent = time  + " " + msg
+        textMessage = msg
+
+        item.textContent = textMessage
 
         //add message to array
         messages.appendChild(item)
@@ -900,7 +896,7 @@
         let time = currentTimeStamp()
 
         //set message text
-        item.textContent = time + " " + msg
+        item.textContent = msg
 
         //add message to array
         messages.appendChild(item)
@@ -923,7 +919,7 @@
 
 
     /*** ids ***/
-    #chat { height: 60vh; width: 40vw; margin: auto; overflow-y: auto; border: 1px solid white; background-color: lightgray; }
+    #chat { height: 60vh; width: 40vw; margin: auto; overflow-y: scroll; border: 1px solid white; background-color: white; }
     /* #form { height: 6%; border: 1px solid black; background: lightgray; margin-right: 1px; padding: 10px; padding-bottom: 10px; position: fixed; bottom: 0; right: 0; display: flex; box-sizing: border-box; backdrop-filter: blur(10px); } */
     /* #form > button { background: #333; border: 1px solid #333; outline: none; color: #fff; } */
     #inputChatMessage 
@@ -937,6 +933,7 @@
         font-weight: bold;
         color: white;
         border: 1px solid white;
+        border-top: 0px solid white;
         background-color: black;
     }
     #inputChatMessage:focus { outline: none; }
@@ -985,10 +982,10 @@
         border: 1px solid white;
         background-color: black; 
     } 
-    #messages { list-style-type: none; margin: 0; padding: 0; }
-    #messages > li { padding: 16px; font-weight: bold; }
-    #messages > li:nth-child(even) { background: white; }
-    #messages > li:nth-child(odd) { background: #efefef; }
+    #messages { width: calc(40vw - 20px); margin: 0; padding: 0; list-style-type: none; }
+    #messages > li { width: 100%; padding: 12px 0px 12px 10px; word-break: break-all; border-bottom: 1px solid black; }
+    /* #messages > li:nth-child(even) { background: white; } */
+    /* #messages > li:nth-child(odd) { background: #efefef; } */
     #buttonLeaveRoomTest { margin-left: -4px; }
     #inputCreateRoom { width: 100% }
     #toggleMenu 
@@ -1030,7 +1027,7 @@
      }
      #allUsersTitle { display: block; }
      #inputCreateRoom { width: calc(100% - 24px); padding: 10px; font-weight: normal; font-size: 17px; } 
-     #inputAddUser { width: calc(100% - 24px); padding: 10px; font-weight: normal; font-size: 17px; } 
+     #inputChangeUsername { width: calc(100% - 24px); padding: 10px; font-weight: normal; font-size: 17px; } 
      #buttonCreateRoom 
      { 
         width: 100%; 
@@ -1038,7 +1035,7 @@
         font-weight: normal; 
         font-size: 17px;
      } 
-     #buttonAddUsername { width: 100%; padding: 10px; font-weight: normal; font-size: 17px; }
+     #buttonChangeUsername { width: 100%; padding: 10px; font-weight: normal; font-size: 17px; }
      #menuImg 
      { 
         position: fixed; 
@@ -1049,7 +1046,7 @@
         user-select: none;  
         -webkit-user-drag: none; 
      }
-     #menuOptions { max-height: 60vh; width: 30vw; margin: auto; margin-top: 13vh; }
+     #menuOptions { max-height: 60vh; width: 30vw; margin: auto; margin-top: 24vh; }
      #buttonExitMenu 
      { 
         width: 30vw; 
@@ -1077,8 +1074,26 @@
         color: white;
         /* border-bottom: 1px solid white; */
     }
-    #menuCurrentName { display: block; color: white; }
-    #menuCurrentRoom { display: block; color: white; }
+    #menuCurrentName 
+    { 
+        display: block; 
+        color: white; 
+        padding: 10px;
+        user-select: none;
+        color: black;
+        border-top: 1px solid black;
+        background-color: white;
+    }
+    #menuCurrentRoom 
+    {
+        display: block; 
+        color: white; 
+        padding: 10px;
+        user-select: none;
+        color: black;
+        border-top: 1px solid black;
+        background-color: white;
+    }
     #buttonBackToMenu 
     {
         display: none;
@@ -1096,11 +1111,12 @@
     #menuInfo { display: none; width: 30vw; margin: auto; }
     #allRoomsList { max-height: 60vh; overflow-y: auto; }
     #usersList { max-height: 60vh; overflow-y: auto; }
+    #privacyPolicy { margin-top: -18px; text-align: center;     }
+    #about { margin-top: -32px; text-align: center; }
+    #contact { margin-top: -32px; text-align: center; }
 
 
     /*** classes ***/
-    .buttonJoin { padding: 3px; overflow-wrap: break-word; font-weight: normal; font-size: 17px; } 
-    .buttonLeave { padding: 3px; overflow-wrap: break-word; font-weight: normal; font-size: 17px; }
     .buttonClient { width: 100%; } 
     .buttonUser { width: 100%; } 
     .buttonNamespace { width: 100%; }
@@ -1124,28 +1140,79 @@
     }
     .yes { color: lightgreen; }
     .no { color: red; }
-    .privacyPolicyItem { margin: 0px; padding: 4px 0px 0px 0px; font-weight: normal; color: white; }
+    .privacyPolicyItem { margin: 0px; padding: 3px 0px 0px 0px; font-weight: normal; text-align: center; color: white; }
+    .buttonLeave 
+    { 
+        width: 100%;
+        padding: 10px;
+        font-size: 17px; 
+        font-weight: bold; 
+        text-align: left;
+        text-shadow: 1px 1px black; 
+        overflow-wrap: break-word; 
+        color: white; 
+        background-color: red;
+    }
+    .buttonJoin 
+    { 
+        width: 100%;
+        padding: 10px;
+        font-size: 17px; 
+        font-weight: bold;
+        text-align: left;
+        text-shadow: 1px 1px black; 
+        overflow-wrap: break-word; 
+        color: white; 
+        background-color: lightgreen; 
+    }
 
     
     /*** mobile ***/
     @media screen and (max-width: 1300px) {
         li { font-size: 40px; }
 
-        #main { height: 100vh; width: 100vw; margin: auto; font-size: 18px; }
-        #currentRoomInfo { width: 100%; margin: 0px; font-size: 60px; }
-        #chat { height: 90%; width: 100%; }
+        #main { height: 99vh; width: 99vw; margin: auto; font-size: 18px; }
+        #currentRoomInfo { width: 100%; margin: 0px; padding-bottom: 20px; font-size: 49px; border: 0px solid black; }
+        #chat { height: 84vh; width: 99vw; margin-left: -1px; }
         #chatBox { width: 100%; }
-        #menuImg { height: 80px; width: 80px; top: 8px; right: 10px; }
+        #menuImg { height: 90px; width: 90px; top: 0px; right: 4px; }
         #message { font-size: 30px; }
         #menuOptionsTitle { font-size: 60px; }
-        #menuOptions { width: 80vw; margin-top: 20vh; overflow-x: hidden; }
+        #menuOptions { max-height: 80vh; width: 80vw; margin-top: 24vh; overflow-x: hidden; }
         #buttonExitMenu { width: 80vw; font-size: 80px; padding: 30px 0px 30px 0px; }
         #buttonBackToMenu { width: 80vw; font-size: 80px; }
-        #inputChatMessage { font-size: 40px; }
-        #menuCurrentName { width: 100%; }
+        #inputChatMessage { margin-left: 0px; margin-top: 4px; padding: 22px 0px 20px 20px; font-size: 40px; border: 0px solid white; }
+        #menuCurrentName { width: 100%; padding: 20px; }
         #menuCurrentRoom { width: 100%; }
         #menuInfo { display: none; width: 80vw; font-size: 49px; }
+        #buttonSend 
+        { 
+            position: fixed;
+            bottom: 0px;
+            margin-left: 0px; 
+            padding: 24px 20px 24px 20px; 
+            font-size: 40px; 
+            border: 0px solid white; 
+            border-top: 1px solid white; 
+        }
+        #messages { width: 94vw; margin: 0; padding: 0; list-style-type: none; }
+        #messages > li { padding: 12px 0px 12px 18px; padding-right: 20px; }
+        #inputCreateRoom { font-size: 40px; padding: 20px;  }
+        #buttonCreateRoom { font-size: 40px; padding: 20px; }
+        #menuCurrentName { font-size: 40px; }
+        #inputChangeUsername { font-size: 40px; padding: 20px;  }
+        #buttonChangeUsername { font-size: 40px; padding: 20px;  }
+        #aboutText { font-size: 40px; }
+        #contactText { font-size: 40px; }
+        #about { margin-top: -70px; }
+        #privacyPolicy { margin-top: -34px; }
+        #contact { margin-top: -70px; }
 
         .menuCategoryTitle { font-size: 49px; padding: 30px 30px 30px 10px; }
+        .buttonUser { font-size: 40px; }
+        .buttonLeave { font-size: 40px; padding: 20px; }
+        .buttonJoin { font-size: 40px; padding: 20px; }
+        .errorMessage { font-size: 40px; }
+        .privacyPolicyItem { font-size: 40px; }
     }
   </style>

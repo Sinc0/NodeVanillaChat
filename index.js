@@ -16,6 +16,8 @@ var serverUsers = []
 app.use(express.static(path.join(__dirname, 'public'))) //set public folder
 
 //routes
+app.get('/about', (req, res) => { res.sendFile(__dirname + '/about.html'); })
+app.get('/privacy', (req, res) => { res.sendFile(__dirname + '/about.html'); })
 app.get('/*', (req, res) => { res.sendFile(__dirname + '/index.html'); })
 
 //start server
@@ -123,8 +125,8 @@ SocketServer.of("/").on('connection', (client) => {
     // var totalClients = client.server.httpServer._connections
     
     //join default room
-    client.join("general")
-    SocketServer.sockets.in("general").emit('join room', clientName + " joined the room")
+    client.join("General")
+    SocketServer.sockets.in("General").emit('join room', " " + clientName + " joined the room")
 
     //update elements
     updateInfo(client, socketId, clientIp, clientNsp, clientName)
@@ -170,7 +172,7 @@ SocketServer.of("/").on('connection', (client) => {
         SocketServer.sockets.in(msgObj.room).emit('chat message', msgObj)
 
         //log
-        console.log(msgObj.room + " - " + msgObj.userName + " - " + msgObj.content)
+        console.log(msgObj.room + " - <" + msgObj.userName + "> - " + msgObj.content)
     })
         
     client.on('leave room', (msg) => {
@@ -202,10 +204,10 @@ SocketServer.of("/").on('connection', (client) => {
         }
 
         //send socket message
-        SocketServer.sockets.in(msg).emit('leave room', clientName + " left the room")
+        SocketServer.sockets.in(msg).emit('leave room', " " + clientName + " left the room")
 
         //log
-        console.log(clientName + " left the room")
+        console.log("<" + clientName + "> left the room")
     })
 
     client.on('join room', (msg) => {
@@ -246,12 +248,12 @@ SocketServer.of("/").on('connection', (client) => {
         }
 
         //send socket messages
-        SocketServer.sockets.in(oldRoom).emit('leave room', clientName + " left the room")
-        SocketServer.sockets.in(newRoom).emit('join room', clientName + " joined the room")
+        SocketServer.sockets.in(oldRoom).emit('leave room', " " + clientName + " left the room")
+        SocketServer.sockets.in(newRoom).emit('join room', " " + clientName + " joined the room")
 
         //log
-        console.log(oldRoom + " - " + clientName + " - " + "left the room")
-        console.log(newRoom + " - " + clientName + " - " + "joined the room")
+        console.log(oldRoom + " - <" + clientName + "> - " + "left the room")
+        console.log(newRoom + " - <" + clientName + "> - " + "joined the room")
     })
 
     client.on('create room', (msg) => {
@@ -297,9 +299,9 @@ SocketServer.of("/").on('connection', (client) => {
         updateInfo(client)
         
         //send socket messages
-        SocketServer.sockets.in(oldRoom).emit('leave room', clientName + " left the room")
-        SocketServer.sockets.in(newRoom).emit('create room', newRoom + " room created")
-        SocketServer.sockets.in(newRoom).emit('join room', clientName + " joined the room")
+        SocketServer.sockets.in(oldRoom).emit('leave room', " " + clientName + " left the room")
+        SocketServer.sockets.in(newRoom).emit('create room', "room " + newRoom + " created")
+        SocketServer.sockets.in(newRoom).emit('join room', " " + clientName + " joined the room")
 
         //log
         console.log(oldRoom + " - " + clientName + " - " + "left the room")

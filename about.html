@@ -1,0 +1,81 @@
+<html>
+    <head>
+        <title>About</title>
+    </head>
+
+    <body>
+        <p id="aboutTitle" class="menuCategoryTitle">About</p>
+        <div id="about" class="menuCategory">
+            <p id="aboutText">This is a student project, made to learn about Socket.IO</p>
+        </div>
+
+        <p id="privacyPolicyTitle" class="menuCategoryTitle">Privacy Policy</p>
+        <div id="privacyPolicy" class="menuCategory">
+            <p class="privacyPolicyItem">Collects Account Data: <span class="no">No</span></p>
+            <p class="privacyPolicyItem">Collects Personal Data: <span class="no">No</span></p>
+            <p class="privacyPolicyItem">Collects Device Data: <span class="no">No</span></p>
+            <p class="privacyPolicyItem">Collects Metrics Data: <span class="no">No</span></p>
+            <p class="privacyPolicyItem">Collects Diagnostics Data: <span class="no">No</span></p>
+            <p class="privacyPolicyItem">Collects Location Data: <span class="no">No</span></p>
+            <p class="privacyPolicyItem">Collects Financial Data: <span class="no">No</span></p>
+            <p class="privacyPolicyItem">Collects Messages Data: <span class="no">No</span></p>
+            <p class="privacyPolicyItem">Collects Media Data: <span class="no">No</span></p>
+            <p class="privacyPolicyItem">Uses Cookies: <span class="no">No</span></p>
+            <p class="privacyPolicyItem">Uses Local Storage: <span class="no">No</span></p>
+            <p class="privacyPolicyItem">Links to Other Websites: <span class="no">No</span></p>
+            <p class="privacyPolicyItem">Policy Might Change in the Future: <span class="yes">Yes</span></p>
+        </div>
+
+        <p id="contactTitle" class="menuCategoryTitle">Contact</p>
+        <div id="contact">
+            <p id="contactText">sinco.developer@gmail.com</p>
+        </div>
+    </body>
+</html>
+
+<style>
+    /*** elements ***/
+    body 
+    { 
+        height: 100vh; 
+        width: 100vw; 
+        margin: auto; 
+        padding: 0px; 
+        font-family: Arial, Helvetica, sans-serif; 
+        color: white;
+        background-color: black; 
+    }
+    p { margin: 0px; padding: 0px; }
+
+    /*** ids ***/
+    #about { width: 30vw; margin: auto; }
+    #privacyPolicy { width: 30vw; margin: auto; }
+    #contact { width: 30vw; margin: auto; }
+    #aboutTitle { width: 30vw; margin: auto; padding: 0px; padding-top: 12vh; font-size: 18px; text-align: center; }
+    #privacyPolicyTitle { width: 30vw; margin: auto; margin-top: 30px; padding: 0px; font-size: 18px; text-align: center; }
+    #contactTitle { width: 30vw; margin: auto; margin-top: 30px; padding: 0px; font-size: 18px; text-align: center; }
+    #aboutText { width: 100%; margin: auto; padding: 0px; text-align: center; }
+    #contactText { width: 100%; margin: auto; padding: 0px; text-align: center; }
+
+    /*** classes ***/
+    .yes { color: lightgreen; }
+    .no { color: red; }
+    .privacyPolicyItem { margin: 0px; padding: 3px 0px 0px 0px; font-weight: normal; text-align: center; color: white; }
+    .menuCategoryTitle { width: 100%; margin: auto; margin-top: 30px; padding: 0px 30px 0px 10px; text-align: center; font-weight: bold; }
+
+    /*** mobile ***/
+    @media screen and (max-width: 1300px) {
+        #about { width: 90vw; margin: auto; }
+        #privacyPolicy { width: 90vw; margin: auto; }
+        #contact { width: 90vw; margin: auto; }
+
+        #aboutTitle { width: 90vw; padding-top: 10vh; font-size: 49px; }
+        #privacyPolicyTitle { width: 90vw; margin-top: 80px; font-size: 49px; }
+        #contactTitle { width: 90vw; margin-top: 80px; font-size: 49px; }
+        
+        #aboutText { width: 100%; font-size: 30px; margin: auto; text-align: center;  }
+        #contactText { width: 100%; font-size: 30px; margin: auto; text-align: center;  }
+
+        .privacyPolicyItem { font-size: 30px; }
+    }
+</style>

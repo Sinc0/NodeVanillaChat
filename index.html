@@ -175,7 +175,7 @@
         let newRoom = inputCreateRoom.value
 
         //debugging
-        console.log(newRoom)
+        // console.log(newRoom)
 
         //push new room name and old room name to array
         createRoomInfo.push(inputCreateRoom.value)
@@ -529,7 +529,7 @@
     //handle socket stream
     socket.on('chat message', function(msg) {
         //debugging
-        console.log(msg)
+        // console.log(msg)
 
         //variables
         let item = document.createElement('li')
@@ -551,9 +551,9 @@
 
     socket.on('info', function(allRooms, allClients, all_namespaces, clientInfo) {
         //debugging
-        console.log("socket id: " + socket.id)
-        console.log("socket nsp: " + socket.nsp)
-        console.log(clientInfo)
+        // console.log("socket id: " + socket.id)
+        // console.log("socket nsp: " + socket.nsp)
+        // console.log(clientInfo)
         // console.log(socket)
         // console.log(allRooms)
         // console.log(allClients)
@@ -736,7 +736,6 @@
             {
                 if(allRooms[r].room == defaultRooms[c])
                 {
-                    console.log(allRooms[r].room)
                     count = allRooms[r].clients.length.toString()
                 }
             }
@@ -852,8 +851,8 @@
     
     socket.on('leave room', function(msg) {
         //debugging
-        console.log("msg")
-        
+        // console.log(msg)
+    
         //elements
         let item = document.createElement('li')
         let time = currentTimeStamp()
@@ -871,7 +870,7 @@
 
     socket.on('join room', function(msg) {
         //debugging
-        console.log(msg)
+        // console.log(msg)
 
         //variables
         let item = document.createElement('li')
@@ -892,7 +891,7 @@
 
     socket.on('create room', function(msg) {
         //debugging
-        console.log(msg)
+        // console.log(msg)
 
         //variables
         let item = document.createElement('li')

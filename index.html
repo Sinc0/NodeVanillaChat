@@ -193,7 +193,7 @@
             // alert("room name cannot be empty/contain space or following characters !@<<|,%")
             let errorMessageCreateRoom = document.getElementById("errorMessageCreateRoom")
             errorMessageCreateRoom.style.display = "block"
-            errorMessageCreateRoom.innerText = "room name cannot be empty/contain space or following characters !@<<|,%"
+            errorMessageCreateRoom.innerText = "invalid room name"
             return
         }
         
@@ -427,7 +427,7 @@
         aboutTitle.style.borderBottom = "1px solid white"
         privacyPolicyTitle.style.borderBottom = "1px solid white"
         contactTitle.style.borderBottom = "1px solid white"
-        menuOptions.style.marginTop = "24vh"
+        menuOptions.style.marginTop = "20vh"
 
         //update elements
         if(category == "info")
@@ -462,7 +462,7 @@
             contactTitle.style.display = "block"
             contactTitle.style.borderBottom = "0px solid white"
             contactTitle.style.marginTop = "30px"
-            menuOptions.style.marginTop = "10vh"
+            menuOptions.style.marginTop = "6vh"
         }
     }
 
@@ -519,7 +519,7 @@
         aboutTitle.style.borderBottom = "1px solid white"
         privacyPolicyTitle.style.borderBottom = "1px solid white"
 
-        menuOptions.style.marginTop = "24vh"
+        menuOptions.style.marginTop = "20vh"
     }
 
 
@@ -639,16 +639,8 @@
             let p = document.createElement('p')
             // let button = document.createElement('button')
             
-            //create client info paragraph
+            //set user info paragraph
             p.className = "buttonUser"
-            p.style.width = "auto"
-            p.style.padding = "10px"
-            p.style.margin = "0px"
-            p.style.color = "black"
-            p.style.textAlign = "left"
-            p.style.userSelect = "none"
-            p.style.borderBottom = "1px solid black"
-            p.style.backgroundColor = "white"
 
             //null check
             if(clientName == "")
@@ -1169,6 +1161,17 @@
         color: black; 
         background-color: lightgreen; 
     }
+    .buttonUser 
+    {
+        width: auto;
+        padding: 10px;
+        margin: 0px;
+        color: black;
+        text-align: left;
+        user-select: none;
+        border-bottom: 1px solid black;
+        background-color: white;
+    }
 
     
     /*** mobile ***/
@@ -1192,7 +1195,7 @@
         #menuImg { position: absolute; height: 110px; width: 100px; top: 4px; right: 14px; }
         #message { font-size: 30px; }
         #menuOptionsTitle { font-size: 60px; }
-        #menuOptions { max-height: 80vh; width: 80vw; margin-top: 24vh; overflow-x: hidden; overflow-y: auto; }
+        #menuOptions { max-height: 90vh; width: 88vw; margin-top: 20vh; overflow-x: hidden; overflow-y: auto; }
         #buttonExitMenu { width: 80vw; font-size: 80px; padding: 30px 0px 30px 0px; }
         #buttonBackToMenu { width: 80vw; font-size: 80px; font-weight: bold; }
         #inputChatMessage 
@@ -1205,8 +1208,8 @@
             font-size: 49px; 
             border: 0px solid white; 
         }
-        #menuCurrentName { width: 100%; padding: 20px; }
-        #menuCurrentRoom { width: 100%; }
+        #menuCurrentName { width: 100%; padding: 20px; font-size: 49px; }
+        #menuCurrentRoom { width: 100%; font-size: 49px; }
         #menuInfo { display: none; width: 80vw; font-size: 49px; }
         #buttonSend 
         { 
@@ -1220,22 +1223,22 @@
         }
         #messages { width: 94vw; margin: 0; padding: 0; list-style-type: none; }
         #messages > li { padding: 12px 0px 12px 18px; padding-right: 20px; color: black; }
-        #inputCreateRoom { font-size: 40px; padding: 20px;  }
-        #buttonCreateRoom { font-size: 40px; padding: 20px; }
-        #menuCurrentName { font-size: 40px; }
-        #inputChangeUsername { font-size: 40px; padding: 20px;  }
-        #buttonChangeUsername { font-size: 40px; padding: 20px;  }
-        #aboutText { font-size: 40px; }
-        #contactText { font-size: 40px; }
+        #inputCreateRoom { font-size: 49px; padding: 20px;  }
+        #buttonCreateRoom { font-size: 49px; padding: 20px; }
+        #menuCurrentName { font-size: 49px; }
+        #inputChangeUsername { font-size: 49px; padding: 20px;  }
+        #buttonChangeUsername { font-size: 49px; padding: 20px;  }
+        #aboutText { font-size: 49px; }
+        #contactText { font-size: 49px; }
         #about { margin-top: -70px; }
         #privacyPolicy { margin-top: -34px; }
         #contact { margin-top: -70px; }
 
         .menuCategoryTitle { font-size: 49px; padding: 30px 30px 30px 10px; }
-        .buttonUser { font-size: 40px; }
-        .buttonLeave { font-size: 40px; padding: 20px; }
-        .buttonJoin { font-size: 40px; padding: 20px; }
-        .errorMessage { font-size: 40px; }
-        .privacyPolicyItem { font-size: 40px; }
+        .buttonUser { font-size: 49px; padding: 20px; }
+        .buttonLeave { font-size: 49px; padding: 20px; }
+        .buttonJoin { font-size: 49px; padding: 20px; }
+        .errorMessage { font-size: 49px; }
+        .privacyPolicyItem { font-size: 49px; }
     }
   </style>

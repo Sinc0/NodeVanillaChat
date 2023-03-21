@@ -1180,20 +1180,29 @@
         li { font-size: 40px; }
 
         #main { height: 99vh; width: 99vw; margin: auto; font-size: 18px; }
-        #currentRoomInfo { width: 100%; margin: 0px; padding: 20px 0px 20px 0px; font-size: 49px; border: 0px solid black; }
-        #chat { height: 84vh; width: 99vw; margin-left: -1px; }
+        #currentRoomInfo 
+        { 
+            position: fixed; 
+            top: 0px; 
+            width: 100%; 
+            margin: 0px; 
+            padding: 20px 0px 20px 0px; 
+            font-size: 49px; 
+            border: 0px solid black; 
+        }
+        #chat { height: 84vh; width: 99vw; margin-top: 98px; margin-left: -1px; }
         #chatBox { width: 100%; }
         #menuImg { position: absolute; height: 90px; width: 90px; top: 0px; right: 4px; }
         #message { font-size: 30px; }
         #menuOptionsTitle { font-size: 60px; }
         #menuOptions { max-height: 80vh; width: 80vw; margin-top: 24vh; overflow-x: hidden; overflow-y: auto; }
         #buttonExitMenu { width: 80vw; font-size: 80px; padding: 30px 0px 30px 0px; }
-        #buttonBackToMenu { width: 80vw; font-size: 100px; font-weight: bold; }
+        #buttonBackToMenu { width: 80vw; font-size: 80px; font-weight: bold; }
         #inputChatMessage 
         { 
             position: fixed;
             bottom: 96px;
-            margin-left: 0px; 
+            margin-left: -1px; 
             margin-top: 4px; 
             padding: 22px 0px 20px 20px; 
             font-size: 40px; 
@@ -1206,7 +1215,7 @@
         { 
             position: fixed;
             bottom: 0px;
-            margin-left: 0px; 
+            margin-left: -1px; 
             padding: 24px 20px 24px 20px; 
             font-size: 40px; 
             border: 0px solid white; 

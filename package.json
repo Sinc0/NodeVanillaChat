@@ -1,7 +1,7 @@
 {
   "name": "node-vanilla-chat-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is a student project, made to learn about Socket.IO",
   "main": "index.js",
   "dependencies": {
     "express": "4.17.1",

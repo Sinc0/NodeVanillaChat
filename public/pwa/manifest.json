@@ -6,7 +6,7 @@
 	"display":"standalone",
 	"background_color":"#000000",
 	"theme_color":"#000000",
-	"description":"This is a Node Chat App",
+	"description":"Chat with people",
     "icons": [
         {
 			"src":"/pwa/pwa-icon-192x192.png",					
